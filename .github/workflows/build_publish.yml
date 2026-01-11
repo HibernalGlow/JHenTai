@@ -4,7 +4,7 @@ name: Build & Release
 on:
   push:
     branches:
-      - 'master'
+      - "master"
     tags:
       - v*
 
@@ -32,11 +32,11 @@ jobs:
             artifact_name: release-Linux-x64-deb
             artifact_path: |
               build/linux/*.deb
-#          - target: Linux-x64-AppImage
-#            os: ubuntu-22.04
-#            artifact_name: release-Linux-x64-AppImage
-#            artifact_path: |
-#              build/linux/*.AppImage
+          #          - target: Linux-x64-AppImage
+          #            os: ubuntu-22.04
+          #            artifact_name: release-Linux-x64-AppImage
+          #            artifact_path: |
+          #              build/linux/*.AppImage
           - target: Linux-arm64-deb
             os: ubuntu-22.04-arm
             artifact_name: release-Linux-arm64-deb
@@ -74,14 +74,19 @@ jobs:
           echo "${{ secrets.KEY_PROPERTIES }}" > android/key.properties
       # Add JHenTai api serret
       - name: Setup JHenTai API Secret
+        shell: bash
         run: |
-          echo "${{ secrets.JH_API_SECRET_CONFIG }}" > lib/src/config/jh_api_secret_config.dart
+          if [ -n "${{ secrets.JH_API_SECRET_CONFIG }}" ]; then
+            echo "${{ secrets.JH_API_SECRET_CONFIG }}" > lib/src/config/jh_api_secret_config.dart
+          else
+            echo "class JHApiSecretConfig { static const secret = ''; }" > lib/src/config/jh_api_secret_config.dart
+          fi
       # Setup Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: 'master'
+          channel: "master"
           cache: true
       # Output Flutter Version
       - name: Output Flutter Version
@@ -99,8 +104,8 @@ jobs:
         if: matrix.target == 'Android'
         uses: actions/setup-java@v3
         with:
-          distribution: 'zulu'
-          java-version: '17'
+          distribution: "zulu"
+          java-version: "17"
           cache: gradle
       # Xcodebuild
       - name: Build Xcode
@@ -168,7 +173,7 @@ jobs:
           # Prepare build depends
           sudo apt-get update -y
           sudo apt-get install -y ninja-build libfuse2 webkit2gtk-4.1
-          
+
           # Compile
           flutter build linux --release -t lib/src/main.dart
 
@@ -200,23 +205,23 @@ jobs:
           # Prepare build depends
           sudo apt-get update -y
           sudo apt-get install -y ninja-build libfuse2 webkit2gtk-4.1
-          
+
           # Compile
           flutter build linux --release -t lib/src/main.dart
-          
+
           cd build/linux
-          
+
           mkdir AppDir
           cp -r x64/release/bundle/* AppDir
           mkdir -p AppDir/usr/share/icons/hicolor/512x512/apps/
           mkdir -p AppDir/usr/share/applications
           cp ../../linux/assets/top.jtmonster.jhentai.desktop AppDir/usr/share/applications
           cp ../../assets/icon/JHenTai_512.png AppDir/usr/share/icons/hicolor/512x512/apps/top.jtmonster.jhentai.png
-          
+
           wget -O appimage-builder https://github.com/AppImageCrafters/appimage-builder/releases/download/v1.1.0/appimage-builder-1.1.0-x86_64.AppImage
           chmod +x appimage-builder
           ./appimage-builder --skip-tests --recipe ../../linux/assets/AppImageBuilder.yml
-          
+
           mv JHenTai-latest-x86_64.AppImage JHenTai-${{ steps.get_version.outputs.version }}-Linux-x64.AppImage
       # Upload Artifacts
       - name: Upload Artifacts
@@ -281,10 +286,10 @@ jobs:
           # Remove build number part (content after +)
           VERSION="${FULL_VERSION%%+*}"
           DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-          
+
           # Get changelog as raw string (remove quotes added by jq -Rs)
           CHANGELOG=${{ steps.get_changelog.outputs.changelog }}
-          
+
           # Create new version entry
           jq --arg version "$VERSION" \
              --arg build "${{ steps.get_build_version.outputs.build_version }}" \
@@ -310,4 +315,3 @@ jobs:
           git add altsource/AltSource.json
           git commit -m "Update AltSource.json for version ${{ needs.Build.outputs.version }}"
           git push origin HEAD:master
-
