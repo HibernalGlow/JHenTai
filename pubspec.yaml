@@ -135,6 +135,8 @@ dependency_overrides:
       path: dio
       ref: append-mode
   collection: 1.19.0
+  path: any
+  intl: any
 
 dev_dependencies:
   flutter_test:
