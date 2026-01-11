@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:math';
+
+import 'package:clipboard/clipboard.dart';
 
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
@@ -340,5 +343,76 @@ mixin SearchPageLogicMixin on BasePageLogic {
     state.enableSearchHistoryTranslation = !state.enableSearchHistoryTranslation;
     await localConfigService.write(configKey: ConfigEnum.enableSearchHistoryTranslation, value: state.enableSearchHistoryTranslation.toString());
     update([suggestionBodyId]);
+  }
+
+  void toggleSelectionMode() {
+    state.isSelectionMode = !state.isSelectionMode;
+    if (!state.isSelectionMode) {
+      state.selectedGids.clear();
+    }
+    update();
+  }
+
+  void toggleSelection(int gid) {
+    if (state.selectedGids.contains(gid)) {
+      state.selectedGids.remove(gid);
+    } else {
+      state.selectedGids.add(gid);
+    }
+    update();
+  }
+
+  Future<void> copySelectedTorrents() async {
+    if (state.selectedGids.isEmpty) {
+      return;
+    }
+
+    List<Gallery> selectedGalleries = state.gallerys.where((g) => state.selectedGids.contains(g.gid)).toList();
+    List<String> magnetLinks = [];
+
+    toast('fetchingMagnetLinks'.tr);
+
+    for (Gallery gallery in selectedGalleries) {
+      try {
+        List<GalleryTorrent> torrents = await ehRequest.requestTorrentPage<List<GalleryTorrent>>(
+          gallery.gid,
+          gallery.token,
+          EHSpiderParser.torrentPage2GalleryTorrent,
+        );
+        if (torrents.isNotEmpty) {
+          magnetLinks.add(torrents.first.magnetUrl);
+        }
+      } catch (e) {
+        log.error('fetchMagnetLinkFailed'.tr + ': ${gallery.gid}', e);
+      }
+    }
+
+    if (magnetLinks.isNotEmpty) {
+      await FlutterClipboard.copy(magnetLinks.join('\n'));
+      toast('hasCopiedToClipboard'.tr);
+      toggleSelectionMode();
+    } else {
+      toast('noMagnetLinksFound'.tr);
+    }
+  }
+
+  Future<void> quickCopyTorrent(Gallery gallery) async {
+    toast('fetchingMagnetLink'.tr);
+    try {
+      List<GalleryTorrent> torrents = await ehRequest.requestTorrentPage<List<GalleryTorrent>>(
+        gallery.gid,
+        gallery.token,
+        EHSpiderParser.torrentPage2GalleryTorrent,
+      );
+      if (torrents.isNotEmpty) {
+        await FlutterClipboard.copy(torrents.first.magnetUrl);
+        toast('hasCopiedToClipboard'.tr);
+      } else {
+        toast('noMagnetLinksFound'.tr);
+      }
+    } catch (e) {
+      log.error('fetchMagnetLinkFailed'.tr, e);
+      snack('fetchMagnetLinkFailed'.tr, e.toString());
+    }
   }
 }

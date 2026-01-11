@@ -58,6 +58,49 @@ mixin SearchPageMixin<L extends SearchPageLogicMixin, S extends SearchPageStateM
     ];
   }
 
+  List<Widget> buildSelectionModeActionButtons({VisualDensity? visualDensity}) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.copy),
+        onPressed: logic.copySelectedTorrents,
+        visualDensity: visualDensity,
+      ),
+      IconButton(
+        icon: const Icon(Icons.close),
+        onPressed: logic.toggleSelectionMode,
+        visualDensity: visualDensity,
+      ),
+    ];
+  }
+
+  AppBar? buildAppBar(BuildContext context) {
+    if (state.isSelectionMode) {
+      return AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: logic.toggleSelectionMode,
+        ),
+        title: Text('selected'.tr + ': ${state.selectedGids.length}'),
+        actions: buildSelectionModeActionButtons(),
+      );
+    }
+
+    return AppBar(
+      leading: GestureDetector(
+        child: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => backRoute(currentRoute: Routes.mobileV2Search),
+        ),
+        onLongPress: () => untilRoute(currentRoute: Routes.mobileV2Search, predicate: (route) => route.isFirst),
+      ),
+      title: state.totalCount == null ? null : Text(state.totalCount!.toPrintString()),
+      titleSpacing: 0,
+      titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 16),
+      bottom: PreferredSize(child: buildSearchField(), preferredSize: const Size(double.infinity, UIConfig.mobileV2SearchBarHeight)),
+      actions: buildActionButtons(visualDensity: const VisualDensity(horizontal: -4)),
+    );
+  }
+
   Widget buildSearchField() {
     return GetBuilder<L>(
       global: false,

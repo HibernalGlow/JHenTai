@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
@@ -46,8 +48,8 @@ class EHGalleryListCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => handleTapCard(gallery),
-      onLongPress: handleLongPressCard == null ? null : () => handleLongPressCard!(gallery),
+      onTap: () => state.isSelectionMode ? logic.toggleSelection(gallery.gid) : handleTapCard(gallery),
+      onLongPress: state.isSelectionMode ? null : (handleLongPressCard == null ? logic.toggleSelectionMode : () => handleLongPressCard!(gallery)),
       onSecondaryTap: handleSecondaryTapCard == null ? null : () => handleSecondaryTapCard!(gallery),
       child: FadeIn(
         duration: const Duration(milliseconds: 100),
@@ -93,7 +95,16 @@ class EHGalleryListCard extends StatelessWidget {
 
     Widget child = ColoredBox(
       color: UIConfig.backGroundColor(context),
-      child: Row(children: children),
+      child: Row(
+        children: [
+          if (state.isSelectionMode)
+            Checkbox(
+              value: state.selectedGids.contains(gallery.gid),
+              onChanged: (value) => logic.toggleSelection(gallery.gid),
+            ).marginOnly(left: 4),
+          ...children,
+        ],
+      ),
     );
 
     if (gallery.blockedByLocalRules) {
@@ -154,9 +165,24 @@ class EHGalleryListCard extends StatelessWidget {
             gallery.uploader!,
             style: TextStyle(fontSize: UIConfig.galleryCardTextSize, color: UIConfig.galleryCardTextColor(context)),
           ).marginOnly(top: 2),
+        if (!state.isSelectionMode)
+          Positioned(
+            right: 0,
+            top: 0,
+            child: IconButton(
+              icon: Icon(FontAwesomeIcons.magnet, size: 14, color: UIConfig.primaryColor(context)),
+              onPressed: () => logic.quickCopyTorrent(gallery),
+              visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+              padding: EdgeInsets.zero,
+            ),
+          ),
       ],
     );
   }
+
+  SearchPageStateMixin get state => Get.find<L>(tag: logic.tag).state;
+
+  L get logic => Get.find<L>();
 
   Widget buildGalleryCardTagWaterFlow(BuildContext context) {
     List<GalleryTag> mergedList = [];

@@ -34,4 +34,8 @@ mixin SearchPageStateMixin on BasePageState {
   ScrollController suggestionBodyController = ScrollController();
 
   FocusNode searchFieldFocusNode = FocusNode();
+
+  bool isSelectionMode = false;
+
+  Set<int> selectedGids = {};
 }

@@ -1,6 +1,8 @@
 import 'dart:collection';
 import 'dart:math';
 
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
@@ -40,8 +42,8 @@ class EHGalleryWaterFlowCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => handleTapCard(gallery),
-      onLongPress: handleLongPressCard == null ? null : () => handleLongPressCard!(gallery),
+      onTap: () => state.isSelectionMode ? logic.toggleSelection(gallery.gid) : handleTapCard(gallery),
+      onLongPress: state.isSelectionMode ? null : (handleLongPressCard == null ? logic.toggleSelectionMode : () => handleLongPressCard!(gallery)),
       onSecondaryTap: handleSecondaryTapCard == null ? null : () => handleSecondaryTapCard!(gallery),
       child: FadeIn(child: _buildCard(context)),
     );
@@ -55,6 +57,22 @@ class EHGalleryWaterFlowCard extends StatelessWidget {
               ? _buildMediumCard(context)
               : _buildBigCard(context),
     );
+
+    if (state.isSelectionMode) {
+      child = Stack(
+        children: [
+          child,
+          Positioned(
+            left: 0,
+            top: 0,
+            child: Checkbox(
+              value: state.selectedGids.contains(gallery.gid),
+              onChanged: (value) => logic.toggleSelection(gallery.gid),
+            ),
+          ),
+        ],
+      );
+    }
 
     if (gallery.blockedByLocalRules) {
       child = Blur(
@@ -132,6 +150,17 @@ class EHGalleryWaterFlowCard extends StatelessWidget {
               ],
             ),
             _buildTitle().marginOnly(top: 4, left: 2),
+            if (!state.isSelectionMode)
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: IconButton(
+                  icon: Icon(FontAwesomeIcons.magnet, size: 12, color: UIConfig.primaryColor(context)),
+                  onPressed: () => logic.quickCopyTorrent(gallery),
+                  visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+                  padding: EdgeInsets.zero,
+                ),
+              ),
             if (gallery.tags.isNotEmpty) _buildTags().marginOnly(top: 4),
           ],
         ).paddingOnly(bottom: 6, left: 6, right: 6)
@@ -293,4 +322,8 @@ class WaterFallFlowTag extends StatelessWidget {
       ),
     );
   }
+
+  SearchPageStateMixin get state => Get.find<L>(tag: logic.tag).state;
+
+  L get logic => Get.find<L>();
 }
