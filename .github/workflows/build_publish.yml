@@ -19,43 +19,43 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: Android
-            os: ubuntu-latest
-            artifact_name: release-Android
-            artifact_path: build/app/outputs/apk/release/*.apk
+          # - target: Android
+          #   os: ubuntu-latest
+          #   artifact_name: release-Android
+          #   artifact_path: build/app/outputs/apk/release/*.apk
           - target: Windows
             os: windows-latest
             artifact_name: release-Windows
             artifact_path: build/windows/*.zip
-          - target: Linux-x64-deb
-            os: ubuntu-22.04
-            artifact_name: release-Linux-x64-deb
-            artifact_path: |
-              build/linux/*.deb
+          # - target: Linux-x64-deb
+          #   os: ubuntu-22.04
+          #   artifact_name: release-Linux-x64-deb
+          #   artifact_path: |
+          #     build/linux/*.deb
           #          - target: Linux-x64-AppImage
           #            os: ubuntu-22.04
           #            artifact_name: release-Linux-x64-AppImage
           #            artifact_path: |
           #              build/linux/*.AppImage
-          - target: Linux-arm64-deb
-            os: ubuntu-22.04-arm
-            artifact_name: release-Linux-arm64-deb
-            artifact_path: |
-              build/linux/*.deb
-          - target: iOS
-            os: macos-latest
-            cache_pod_key: ios-pods
-            cache_pod_path: ios/Pods
-            cache_pod_restore_keys_hash_file: ios/Podfile.lock
-            artifact_name: release-iOS
-            artifact_path: build/**/*.ipa
-          - target: macOS
-            os: macos-latest
-            cache_pod_key: macos-pods
-            cache_pod_path: macos/Pods
-            cache_pod_restore_keys_hash_file: macos/Podfile.lock
-            artifact_name: release-macOS
-            artifact_path: /Users/runner/work/JHenTai/JHenTai/*.dmg
+          # - target: Linux-arm64-deb
+          #   os: ubuntu-22.04-arm
+          #   artifact_name: release-Linux-arm64-deb
+          #   artifact_path: |
+          #     build/linux/*.deb
+          # - target: iOS
+          #   os: macos-latest
+          #   cache_pod_key: ios-pods
+          #   cache_pod_path: ios/Pods
+          #   cache_pod_restore_keys_hash_file: ios/Podfile.lock
+          #   artifact_name: release-iOS
+          #   artifact_path: build/**/*.ipa
+          # - target: macOS
+          #   os: macos-latest
+          #   cache_pod_key: macos-pods
+          #   cache_pod_path: macos/Pods
+          #   cache_pod_restore_keys_hash_file: macos/Podfile.lock
+          #   artifact_name: release-macOS
+          #   artifact_path: /Users/runner/work/JHenTai/JHenTai/*.dmg
     outputs:
       version: ${{ steps.get_version.outputs.version }}
       arch: ${{ steps.get_version.outputs.arch}}
