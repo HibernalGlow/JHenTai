@@ -13,6 +13,8 @@ import '../../mixin/scroll_to_top_page_mixin.dart';
 import '../../mixin/scroll_to_top_state_mixin.dart';
 import '../../widget/eh_gallery_collection.dart';
 import '../../widget/loading_state_indicator.dart';
+import '../search/mixin/search_page_logic_mixin.dart';
+import '../search/mixin/search_page_state_mixin.dart';
 import 'base_page_logic.dart';
 import 'base_page_state.dart';
 
@@ -174,6 +176,10 @@ abstract class BasePage<L extends BasePageLogic, S extends BasePageState> extend
         handleLongPressCard: (gallery) => logic.handleLongPressCard(context, gallery),
         handleSecondaryTapCard: (gallery) => logic.handleSecondaryTapCard(context, gallery),
         handleLoadMore: logic.loadMore,
+        isSelectionMode: state is SearchPageStateMixin ? (state as SearchPageStateMixin).isSelectionMode : false,
+        selectedGids: state is SearchPageStateMixin ? (state as SearchPageStateMixin).selectedGids : null,
+        onToggleSelection: logic is SearchPageLogicMixin ? (logic as SearchPageLogicMixin).toggleSelection : null,
+        onQuickCopyTorrent: logic is SearchPageLogicMixin ? (logic as SearchPageLogicMixin).quickCopyTorrent : null,
       ),
     );
   }

@@ -14,6 +14,7 @@ import 'package:jhentai/src/extension/dio_exception_extension.dart';
 import 'package:jhentai/src/extension/get_logic_extension.dart';
 import 'package:jhentai/src/model/gallery_image_page_url.dart';
 import 'package:jhentai/src/model/gallery_url.dart';
+import 'package:jhentai/src/model/gallery_torrent.dart';
 import 'package:jhentai/src/model/search_history.dart';
 import 'package:jhentai/src/pages/base/base_page_logic.dart';
 import 'package:jhentai/src/pages/search/mixin/search_page_state_mixin.dart';

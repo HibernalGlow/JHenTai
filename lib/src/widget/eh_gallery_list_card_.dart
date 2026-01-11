@@ -42,14 +42,23 @@ class EHGalleryListCard extends StatelessWidget {
     this.withTags = true,
     this.handleLongPressCard,
     this.handleSecondaryTapCard,
+    this.isSelectionMode = false,
+    this.selectedGids,
+    this.onToggleSelection,
+    this.onQuickCopyTorrent,
   }) : super(key: key);
+
+  final bool isSelectionMode;
+  final Set<int>? selectedGids;
+  final void Function(int gid)? onToggleSelection;
+  final void Function(Gallery gallery)? onQuickCopyTorrent;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => state.isSelectionMode ? logic.toggleSelection(gallery.gid) : handleTapCard(gallery),
-      onLongPress: state.isSelectionMode ? null : (handleLongPressCard == null ? logic.toggleSelectionMode : () => handleLongPressCard!(gallery)),
+      onTap: () => isSelectionMode ? onToggleSelection?.call(gallery.gid) : handleTapCard(gallery),
+      onLongPress: isSelectionMode ? null : handleLongPressCard == null ? null : () => handleLongPressCard!(gallery),
       onSecondaryTap: handleSecondaryTapCard == null ? null : () => handleSecondaryTapCard!(gallery),
       child: FadeIn(
         duration: const Duration(milliseconds: 100),
@@ -97,10 +106,10 @@ class EHGalleryListCard extends StatelessWidget {
       color: UIConfig.backGroundColor(context),
       child: Row(
         children: [
-          if (state.isSelectionMode)
+          if (isSelectionMode)
             Checkbox(
-              value: state.selectedGids.contains(gallery.gid),
-              onChanged: (value) => logic.toggleSelection(gallery.gid),
+              value: selectedGids?.contains(gallery.gid) ?? false,
+              onChanged: (value) => onToggleSelection?.call(gallery.gid),
             ).marginOnly(left: 4),
           ...children,
         ],
@@ -165,13 +174,13 @@ class EHGalleryListCard extends StatelessWidget {
             gallery.uploader!,
             style: TextStyle(fontSize: UIConfig.galleryCardTextSize, color: UIConfig.galleryCardTextColor(context)),
           ).marginOnly(top: 2),
-        if (!state.isSelectionMode)
+        if (!isSelectionMode && onQuickCopyTorrent != null)
           Positioned(
             right: 0,
             top: 0,
             child: IconButton(
               icon: Icon(FontAwesomeIcons.magnet, size: 14, color: UIConfig.primaryColor(context)),
-              onPressed: () => logic.quickCopyTorrent(gallery),
+              onPressed: () => onQuickCopyTorrent!(gallery),
               visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
               padding: EdgeInsets.zero,
             ),
@@ -179,10 +188,6 @@ class EHGalleryListCard extends StatelessWidget {
       ],
     );
   }
-
-  SearchPageStateMixin get state => Get.find<L>(tag: logic.tag).state;
-
-  L get logic => Get.find<L>();
 
   Widget buildGalleryCardTagWaterFlow(BuildContext context) {
     List<GalleryTag> mergedList = [];

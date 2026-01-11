@@ -37,13 +37,22 @@ class EHGalleryWaterFlowCard extends StatelessWidget {
     required this.handleTapCard,
     this.handleLongPressCard,
     this.handleSecondaryTapCard,
+    this.isSelectionMode = false,
+    this.selectedGids,
+    this.onToggleSelection,
+    this.onQuickCopyTorrent,
   }) : super(key: key);
+
+  final bool isSelectionMode;
+  final Set<int>? selectedGids;
+  final void Function(int gid)? onToggleSelection;
+  final void Function(Gallery gallery)? onQuickCopyTorrent;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => state.isSelectionMode ? logic.toggleSelection(gallery.gid) : handleTapCard(gallery),
-      onLongPress: state.isSelectionMode ? null : (handleLongPressCard == null ? logic.toggleSelectionMode : () => handleLongPressCard!(gallery)),
+      onTap: () => isSelectionMode ? onToggleSelection?.call(gallery.gid) : handleTapCard(gallery),
+      onLongPress: isSelectionMode ? null : handleLongPressCard == null ? null : () => handleLongPressCard!(gallery),
       onSecondaryTap: handleSecondaryTapCard == null ? null : () => handleSecondaryTapCard!(gallery),
       child: FadeIn(child: _buildCard(context)),
     );
@@ -58,7 +67,7 @@ class EHGalleryWaterFlowCard extends StatelessWidget {
               : _buildBigCard(context),
     );
 
-    if (state.isSelectionMode) {
+    if (isSelectionMode) {
       child = Stack(
         children: [
           child,
@@ -66,8 +75,8 @@ class EHGalleryWaterFlowCard extends StatelessWidget {
             left: 0,
             top: 0,
             child: Checkbox(
-              value: state.selectedGids.contains(gallery.gid),
-              onChanged: (value) => logic.toggleSelection(gallery.gid),
+              value: selectedGids?.contains(gallery.gid) ?? false,
+              onChanged: (value) => onToggleSelection?.call(gallery.gid),
             ),
           ),
         ],
@@ -150,13 +159,13 @@ class EHGalleryWaterFlowCard extends StatelessWidget {
               ],
             ),
             _buildTitle().marginOnly(top: 4, left: 2),
-            if (!state.isSelectionMode)
+            if (!isSelectionMode && onQuickCopyTorrent != null)
               Positioned(
                 right: 0,
                 bottom: 0,
                 child: IconButton(
                   icon: Icon(FontAwesomeIcons.magnet, size: 12, color: UIConfig.primaryColor(context)),
-                  onPressed: () => logic.quickCopyTorrent(gallery),
+                  onPressed: () => onQuickCopyTorrent!(gallery),
                   visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
                   padding: EdgeInsets.zero,
                 ),
@@ -322,8 +331,4 @@ class WaterFallFlowTag extends StatelessWidget {
       ),
     );
   }
-
-  SearchPageStateMixin get state => Get.find<L>(tag: logic.tag).state;
-
-  L get logic => Get.find<L>();
 }
