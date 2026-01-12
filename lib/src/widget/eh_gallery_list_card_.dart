@@ -66,11 +66,7 @@ class EHGalleryListCard extends StatelessWidget {
       onTap: () => isSelectionMode
           ? onToggleSelection?.call(gallery.gid)
           : handleTapCard(gallery),
-      onLongPress: isSelectionMode
-          ? null
-          : (handleLongPressCard == null
-              ? onToggleSelectionMode
-              : () => handleLongPressCard!(gallery)),
+      onLongPress: handleLongPressCard == null ? null : () => handleLongPressCard!(gallery),
       onSecondaryTap: handleSecondaryTapCard == null ? null : () => handleSecondaryTapCard!(gallery),
       child: FadeIn(
         duration: const Duration(milliseconds: 100),

@@ -55,6 +55,11 @@ mixin SearchPageMixin<L extends SearchPageLogicMixin, S extends SearchPageStateM
   List<Widget> buildActionButtons({VisualDensity? visualDensity}) {
     return [
       IconButton(
+        icon: Icon(state.isSelectionMode ? Icons.close : Icons.checklist),
+        onPressed: logic.toggleSelectionMode,
+        visualDensity: visualDensity,
+      ),
+      IconButton(
         icon: const Icon(Icons.attach_file),
         onPressed: logic.handleFileSearch,
         visualDensity: visualDensity,
