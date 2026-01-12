@@ -24,6 +24,12 @@ Widget EHGalleryCollection({
   CardCallback? handleLongPressCard,
   CardCallback? handleSecondaryTapCard,
   VoidCallback? handleLoadMore,
+  // Selection mode parameters
+  bool isSelectionMode = false,
+  Set<int>? selectedGids,
+  void Function(int gid)? onToggleSelection,
+  VoidCallback? onToggleSelectionMode,
+  CardCallback? onQuickCopyTorrent,
 }) {
   Widget _buildGalleryList() {
     /// use FlutterSliverList to [keepPosition] when insert items at top
@@ -50,6 +56,11 @@ Widget EHGalleryCollection({
               handleLongPressCard: handleLongPressCard == null ? null : (gallery) => handleLongPressCard(gallery),
               handleSecondaryTapCard: handleSecondaryTapCard == null ? null : (gallery) => handleSecondaryTapCard(gallery),
               withTags: listMode == ListMode.listWithTags || listMode == ListMode.flat,
+              isSelectionMode: isSelectionMode,
+              selectedGids: selectedGids,
+              onToggleSelection: onToggleSelection,
+              onToggleSelectionMode: onToggleSelectionMode,
+              onQuickCopyTorrent: onQuickCopyTorrent,
             ),
           );
         },

@@ -36,6 +36,12 @@ class EHGalleryListCard extends StatelessWidget {
   final CardCallback? handleLongPressCard;
   final CardCallback? handleSecondaryTapCard;
   final bool withTags;
+  // Selection mode parameters
+  final bool isSelectionMode;
+  final Set<int>? selectedGids;
+  final void Function(int gid)? onToggleSelection;
+  final VoidCallback? onToggleSelectionMode;
+  final CardCallback? onQuickCopyTorrent;
 
   const EHGalleryListCard({
     Key? key,
@@ -46,14 +52,25 @@ class EHGalleryListCard extends StatelessWidget {
     this.withTags = true,
     this.handleLongPressCard,
     this.handleSecondaryTapCard,
+    this.isSelectionMode = false,
+    this.selectedGids,
+    this.onToggleSelection,
+    this.onToggleSelectionMode,
+    this.onQuickCopyTorrent,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => handleTapCard(gallery),
-      onLongPress: handleLongPressCard == null ? null : () => handleLongPressCard!(gallery),
+      onTap: () => isSelectionMode
+          ? onToggleSelection?.call(gallery.gid)
+          : handleTapCard(gallery),
+      onLongPress: isSelectionMode
+          ? null
+          : (handleLongPressCard == null
+              ? onToggleSelectionMode
+              : () => handleLongPressCard!(gallery)),
       onSecondaryTap: handleSecondaryTapCard == null ? null : () => handleSecondaryTapCard!(gallery),
       child: FadeIn(
         duration: const Duration(milliseconds: 100),
@@ -99,7 +116,16 @@ class EHGalleryListCard extends StatelessWidget {
 
     Widget child = ColoredBox(
       color: UIConfig.backGroundColor(context),
-      child: Row(children: children),
+      child: Row(
+        children: [
+          if (isSelectionMode)
+            Checkbox(
+              value: selectedGids?.contains(gallery.gid) ?? false,
+              onChanged: (value) => onToggleSelection?.call(gallery.gid),
+            ).marginOnly(left: 4),
+          ...children,
+        ],
+      ),
     );
 
     if (gallery.blockedByLocalRules) {
@@ -164,16 +190,19 @@ class EHGalleryListCard extends StatelessWidget {
               ).marginOnly(top: 2),
           ],
         ),
-        Positioned(
-          right: 0,
-          top: 0,
-          child: IconButton(
-            icon: Icon(FontAwesomeIcons.magnet, size: 14, color: UIConfig.primaryColor(context)),
-            onPressed: () => _quickCopyTorrent(gallery),
-            visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-            padding: EdgeInsets.zero,
+        if (!isSelectionMode)
+          Positioned(
+            right: 0,
+            top: 0,
+            child: IconButton(
+              icon: Icon(FontAwesomeIcons.magnet, size: 14, color: UIConfig.primaryColor(context)),
+              onPressed: () => onQuickCopyTorrent != null
+                  ? onQuickCopyTorrent!(gallery)
+                  : _quickCopyTorrent(gallery),
+              visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+              padding: EdgeInsets.zero,
+            ),
           ),
-        ),
       ],
     );
   }

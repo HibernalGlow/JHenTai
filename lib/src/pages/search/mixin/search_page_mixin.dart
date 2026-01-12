@@ -20,6 +20,7 @@ import '../../../utils/route_util.dart';
 import '../../../widget/eh_search_config_dialog.dart';
 import '../../../widget/eh_tag.dart';
 import '../../../widget/eh_wheel_speed_controller.dart';
+import '../../../widget/eh_gallery_collection.dart';
 
 mixin SearchPageMixin<L extends SearchPageLogicMixin, S extends SearchPageStateMixin> on BasePage<L, S> {
   @override
@@ -27,6 +28,29 @@ mixin SearchPageMixin<L extends SearchPageLogicMixin, S extends SearchPageStateM
 
   @override
   S get state;
+
+  @override
+  Widget buildGalleryCollection(BuildContext context) {
+    return Obx(
+      () => EHGalleryCollection(
+        key: state.galleryCollectionKey,
+        context: context,
+        gallerys: state.gallerys,
+        listMode: styleSetting.pageListMode[state.route] ?? styleSetting.listMode.value,
+        loadingState: state.loadingState,
+        handleTapCard: logic.handleTapGalleryCard,
+        handleLongPressCard: (gallery) => logic.handleLongPressCard(context, gallery),
+        handleSecondaryTapCard: (gallery) => logic.handleSecondaryTapCard(context, gallery),
+        handleLoadMore: logic.loadMore,
+        // Selection mode parameters
+        isSelectionMode: state.isSelectionMode,
+        selectedGids: state.selectedGids,
+        onToggleSelection: logic.toggleSelection,
+        onToggleSelectionMode: logic.toggleSelectionMode,
+        onQuickCopyTorrent: logic.quickCopyTorrent,
+      ),
+    );
+  }
 
   List<Widget> buildActionButtons({VisualDensity? visualDensity}) {
     return [
