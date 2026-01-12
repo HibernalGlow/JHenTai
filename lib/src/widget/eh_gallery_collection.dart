@@ -101,6 +101,9 @@ Widget EHGalleryCollection({
               handleTapCard: handleTapCard,
               handleLongPressCard: handleLongPressCard == null ? null : (gallery) => handleLongPressCard(gallery),
               handleSecondaryTapCard: handleSecondaryTapCard == null ? null : (gallery) => handleSecondaryTapCard(gallery),
+              isSelectionMode: isSelectionMode,
+              selectedGids: selectedGids,
+              onToggleSelection: onToggleSelection,
             );
           },
           childCount: gallerys.length,

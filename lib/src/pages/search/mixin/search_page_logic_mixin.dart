@@ -379,7 +379,8 @@ mixin SearchPageLogicMixin on BasePageLogic {
           EHSpiderParser.torrentPage2GalleryTorrent,
         );
         if (torrents.isNotEmpty) {
-          magnetLinks.add(torrents.first.magnetUrl);
+          GalleryTorrent torrent = torrents.firstWhere((t) => !t.outdated, orElse: () => torrents.first);
+          magnetLinks.add(torrent.magnetUrl);
         }
       } catch (e) {
         log.error('fetchMagnetLinkFailed'.tr + ': ${gallery.gid}', e);
@@ -404,7 +405,8 @@ mixin SearchPageLogicMixin on BasePageLogic {
         EHSpiderParser.torrentPage2GalleryTorrent,
       );
       if (torrents.isNotEmpty) {
-        await FlutterClipboard.copy(torrents.first.magnetUrl);
+        GalleryTorrent torrent = torrents.firstWhere((t) => !t.outdated, orElse: () => torrents.first);
+        await FlutterClipboard.copy(torrent.magnetUrl);
         toast('hasCopiedToClipboard'.tr);
       } else {
         toast('noMagnetLinksFound'.tr);

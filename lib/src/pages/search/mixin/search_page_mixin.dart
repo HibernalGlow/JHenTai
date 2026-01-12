@@ -59,6 +59,12 @@ mixin SearchPageMixin<L extends SearchPageLogicMixin, S extends SearchPageStateM
         onPressed: logic.toggleSelectionMode,
         visualDensity: visualDensity,
       ),
+      if (state.isSelectionMode && state.selectedGids.isNotEmpty)
+        IconButton(
+          icon: const Icon(Icons.copy),
+          onPressed: logic.copySelectedTorrents,
+          visualDensity: visualDensity,
+        ),
       IconButton(
         icon: const Icon(Icons.attach_file),
         onPressed: logic.handleFileSearch,

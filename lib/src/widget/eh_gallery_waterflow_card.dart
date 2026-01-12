@@ -27,6 +27,10 @@ class EHGalleryWaterFlowCard extends StatelessWidget {
   final CardCallback? handleLongPressCard;
   final CardCallback? handleSecondaryTapCard;
 
+  final bool isSelectionMode;
+  final Set<int>? selectedGids;
+  final void Function(int gid)? onToggleSelection;
+
   const EHGalleryWaterFlowCard({
     Key? key,
     required this.gallery,
@@ -35,12 +39,15 @@ class EHGalleryWaterFlowCard extends StatelessWidget {
     required this.handleTapCard,
     this.handleLongPressCard,
     this.handleSecondaryTapCard,
+    this.isSelectionMode = false,
+    this.selectedGids,
+    this.onToggleSelection,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => handleTapCard(gallery),
+      onTap: () => isSelectionMode ? onToggleSelection?.call(gallery.gid) : handleTapCard(gallery),
       onLongPress: handleLongPressCard == null ? null : () => handleLongPressCard!(gallery),
       onSecondaryTap: handleSecondaryTapCard == null ? null : () => handleSecondaryTapCard!(gallery),
       child: FadeIn(child: _buildCard(context)),
@@ -69,6 +76,22 @@ class EHGalleryWaterFlowCard extends StatelessWidget {
             Text('filtered'.tr, style: TextStyle(color: UIConfig.onBackGroundColor(context))),
           ],
         ),
+      );
+    }
+
+    if (isSelectionMode && (selectedGids?.contains(gallery.gid) ?? false)) {
+      child = Stack(
+        children: [
+          child,
+          Positioned.fill(
+            child: Container(
+              color: Colors.black.withOpacity(0.4),
+              child: const Center(
+                child: Icon(Icons.check_circle, color: Colors.white, size: 30),
+              ),
+            ),
+          ),
+        ],
       );
     }
 
