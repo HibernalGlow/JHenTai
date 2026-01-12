@@ -52,16 +52,21 @@ class DesktopSearchPage extends StatelessWidget with Scroll2TopPageMixin {
   Widget buildTabBar() {
     return GetBuilder<DesktopSearchPageLogic>(
       id: logic.tabBarId,
-      builder: (_) => LayoutBuilder(
-        builder: (context, constraints) => Container(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: Row(
+      builder: (_) => SizedBox(
+        height: UIConfig.desktopSearchTabHeight,
+        child: LayoutBuilder(
+          builder: (context, constraints) => Row(
             children: [
-              Expanded(
-                child: Wrap(
-                  spacing: 0,
-                  runSpacing: 0,
-                  children: _buildTabs(context),
+              ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: constraints.maxWidth - UIConfig.desktopSearchTabRemainingWidth),
+                child: EHWheelSpeedController(
+                  controller: state.tabController,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    controller: state.tabController,
+                    shrinkWrap: true,
+                    children: _buildTabs(context),
+                  ).enableMouseDrag(withScrollBar: false),
                 ),
               ),
               IconButton(
