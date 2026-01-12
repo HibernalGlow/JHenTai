@@ -45,6 +45,8 @@ import 'package:jhentai/src/service/log.dart';
 import 'package:jhentai/src/utils/screen_size_util.dart';
 import 'package:jhentai/src/utils/snack_util.dart';
 import 'package:jhentai/src/widget/loading_state_indicator.dart';
+import 'package:jhentai/src/service/gallery_magnet_service.dart';
+import '../../setting/preference_setting.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../exception/eh_site_exception.dart';
@@ -144,6 +146,10 @@ class DetailsPageLogic extends GetxController with LoginRequiredMixin, Scroll2To
   void onReady() async {
     super.onReady();
 
+    if (preferenceSetting.autoFetchMagnet.isTrue && state.gallery != null) {
+      galleryMagnetService.fetchAllMagnets([state.gallery!]);
+    }
+
     if (state.galleryDetails == null || state.apikey == null) {
       getDetails();
     }
@@ -227,6 +233,10 @@ class DetailsPageLogic extends GetxController with LoginRequiredMixin, Scroll2To
     state.nextPageIndexToLoadThumbnails = 1;
 
     await tagTranslationService.translateTagsIfNeeded(state.galleryDetails!.tags);
+
+    if (preferenceSetting.autoFetchMagnet.isTrue) {
+      galleryMagnetService.fetchAllMagnets([state.galleryDetails!.toGallery()]);
+    }
 
     _addColor2WatchedTags(state.galleryDetails!.tags);
 

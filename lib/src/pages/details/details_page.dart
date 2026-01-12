@@ -42,6 +42,9 @@ import '../../utils/string_uril.dart';
 import '../../widget/eh_gallery_category_tag.dart';
 import 'details_page_logic.dart';
 import 'details_page_state.dart';
+import 'package:clipboard/clipboard.dart';
+import 'package:jhentai/src/service/gallery_magnet_service.dart';
+import 'package:jhentai/src/utils/toast_util.dart';
 
 class DetailsPage extends StatelessWidget with Scroll2TopPageMixin {
   final String tag = newUUID();
@@ -284,41 +287,93 @@ class DetailsPage extends StatelessWidget with Scroll2TopPageMixin {
       global: false,
       init: logic,
       builder: (_) {
-        return SelectableText(
-          logic.mainTitleText,
-          minLines: 1,
-          maxLines: 5,
-          style: const TextStyle(
-            fontSize: UIConfig.detailsPageTitleTextSize,
-            letterSpacing: UIConfig.detailsPageTitleLetterSpacing,
-            height: UIConfig.detailsPageTitleTextHeight,
-          ),
-          contextMenuBuilder: (BuildContext context, EditableTextState editableTextState) {
-            AdaptiveTextSelectionToolbar toolbar = AdaptiveTextSelectionToolbar.buttonItems(
-              buttonItems: editableTextState.contextMenuButtonItems,
-              anchors: editableTextState.contextMenuAnchors,
-            );
-
-            if (!editableTextState.currentTextEditingValue.selection.isCollapsed) {
-              toolbar.buttonItems?.add(
-                ContextMenuButtonItem(
-                  label: 'search'.tr,
-                  onPressed: () {
-                    ContextMenuController.removeAny();
-                    newSearch(
-                      keyword: editableTextState.currentTextEditingValue.selection.textInside(editableTextState.currentTextEditingValue.text),
-                      forceNewRoute: true,
-                    );
-                  },
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: SelectableText(
+                logic.mainTitleText,
+                minLines: 1,
+                maxLines: 5,
+                style: const TextStyle(
+                  fontSize: UIConfig.detailsPageTitleTextSize,
+                  letterSpacing: UIConfig.detailsPageTitleLetterSpacing,
+                  height: UIConfig.detailsPageTitleTextHeight,
                 ),
-              );
-            }
+                contextMenuBuilder: (BuildContext context, EditableTextState editableTextState) {
+                  AdaptiveTextSelectionToolbar toolbar = AdaptiveTextSelectionToolbar.buttonItems(
+                    buttonItems: editableTextState.contextMenuButtonItems,
+                    anchors: editableTextState.contextMenuAnchors,
+                  );
 
-            return toolbar;
-          },
-        ).enableMouseDrag(withScrollBar: false);
+                  if (!editableTextState.currentTextEditingValue.selection.isCollapsed) {
+                    toolbar.buttonItems?.add(
+                      ContextMenuButtonItem(
+                        label: 'search'.tr,
+                        onPressed: () {
+                          ContextMenuController.removeAny();
+                          newSearch(
+                            keyword: editableTextState.currentTextEditingValue.selection.textInside(editableTextState.currentTextEditingValue.text),
+                            forceNewRoute: true,
+                          );
+                        },
+                      ),
+                    );
+                  }
+
+                  return toolbar;
+                },
+              ).enableMouseDrag(withScrollBar: false),
+            ),
+            const SizedBox(width: 8),
+            _buildMagnetButton(context),
+          ],
+        );
       },
     );
+  }
+
+  Widget _buildMagnetButton(BuildContext context) {
+    return Obx(() {
+      final int gid = state.galleryUrl.gid;
+      final bool isFetching = galleryMagnetService.isFetching(gid);
+      final String? magnet = galleryMagnetService.getMagnet(gid);
+
+      if (isFetching) {
+        return const SizedBox(
+          width: 24,
+          height: 24,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        );
+      }
+
+      return IconButton(
+        icon: Icon(
+          FontAwesomeIcons.magnet,
+          size: 18,
+          color: magnet != null
+              ? (magnet.isEmpty ? Colors.grey : UIConfig.primaryColor(context))
+              : UIConfig.primaryColor(context),
+        ),
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints(),
+        onPressed: () {
+          if (magnet != null && magnet.isNotEmpty) {
+            FlutterClipboard.copy(magnet).then((_) => toast('hasCopiedToClipboard'.tr));
+          } else {
+             // If not available, try to fetch if we have gallery info
+             if (state.gallery != null) {
+                galleryMagnetService.fetchAllMagnets([state.gallery!]);
+             } else if (state.galleryDetails != null) {
+                galleryMagnetService.fetchAllMagnets([state.galleryDetails!.toGallery()]);
+             } else {
+                toast('waitLoading'.tr);
+             }
+          }
+        },
+      );
+    });
+  }
   }
 
   Widget _buildSubTitle(BuildContext context) {
