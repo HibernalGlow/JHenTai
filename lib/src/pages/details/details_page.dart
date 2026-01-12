@@ -844,6 +844,7 @@ class DetailsPage extends StatelessWidget with Scroll2TopPageMixin {
             itemExtent: max(UIConfig.detailsPageActionExtent, (constraints.maxWidth - UIConfig.detailPagePadding * 2) / 8),
             padding: EdgeInsets.zero,
             children: [
+              _buildTorrentButton(context),
               _buildReadButton(context),
               _buildDownloadButton(context),
               _buildFavoriteButton(context),
@@ -851,7 +852,6 @@ class DetailsPage extends StatelessWidget with Scroll2TopPageMixin {
               _buildArchiveButton(context),
               _buildHHButton(context),
               _buildSimilarButton(context),
-              _buildTorrentButton(context),
               // _buildStatisticButton(context),
             ],
           ).enableMouseDrag(withScrollBar: false),
