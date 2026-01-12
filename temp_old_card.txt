@@ -1,7 +1,7 @@
-import 'dart:async';
+﻿import 'dart:async';
 
-import 'package:clipboard/clipboard.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
@@ -21,10 +21,6 @@ import 'eh_image.dart';
 import 'eh_tag.dart';
 import 'eh_gallery_category_tag.dart';
 import '../service/read_progress_service.dart';
-import '../network/eh_request.dart';
-import '../utils/eh_spider_parser.dart';
-import '../utils/toast_util.dart';
-import '../model/gallery_torrent.dart';
 
 typedef CardCallback = FutureOr<void> Function(Gallery gallery);
 
@@ -52,8 +48,8 @@ class EHGalleryListCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => handleTapCard(gallery),
-      onLongPress: handleLongPressCard == null ? null : () => handleLongPressCard!(gallery),
+      onTap: () => state.isSelectionMode ? logic.toggleSelection(gallery.gid) : handleTapCard(gallery),
+      onLongPress: state.isSelectionMode ? null : (handleLongPressCard == null ? logic.toggleSelectionMode : () => handleLongPressCard!(gallery)),
       onSecondaryTap: handleSecondaryTapCard == null ? null : () => handleSecondaryTapCard!(gallery),
       child: FadeIn(
         duration: const Duration(milliseconds: 100),
@@ -99,7 +95,16 @@ class EHGalleryListCard extends StatelessWidget {
 
     Widget child = ColoredBox(
       color: UIConfig.backGroundColor(context),
-      child: Row(children: children),
+      child: Row(
+        children: [
+          if (state.isSelectionMode)
+            Checkbox(
+              value: state.selectedGids.contains(gallery.gid),
+              onChanged: (value) => logic.toggleSelection(gallery.gid),
+            ).marginOnly(left: 4),
+          ...children,
+        ],
+      ),
     );
 
     if (gallery.blockedByLocalRules) {
@@ -145,58 +150,39 @@ class EHGalleryListCard extends StatelessWidget {
   }
 
   Widget buildGalleryCardInfoHeader(BuildContext context) {
-    return Stack(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              gallery.title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: UIConfig.galleryCardTitleSize, height: 1.2),
+        Text(
+          gallery.title,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: UIConfig.galleryCardTitleSize, height: 1.2),
+        ),
+        if (gallery.uploader != null)
+          Text(
+            gallery.uploader!,
+            style: TextStyle(fontSize: UIConfig.galleryCardTextSize, color: UIConfig.galleryCardTextColor(context)),
+          ).marginOnly(top: 2),
+        if (!state.isSelectionMode)
+          Positioned(
+            right: 0,
+            top: 0,
+            child: IconButton(
+              icon: Icon(FontAwesomeIcons.magnet, size: 14, color: UIConfig.primaryColor(context)),
+              onPressed: () => logic.quickCopyTorrent(gallery),
+              visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+              padding: EdgeInsets.zero,
             ),
-            if (gallery.uploader != null)
-              Text(
-                gallery.uploader!,
-                style: TextStyle(fontSize: UIConfig.galleryCardTextSize, color: UIConfig.galleryCardTextColor(context)),
-              ).marginOnly(top: 2),
-          ],
-        ),
-        Positioned(
-          right: 0,
-          top: 0,
-          child: IconButton(
-            icon: Icon(FontAwesomeIcons.magnet, size: 14, color: UIConfig.primaryColor(context)),
-            onPressed: () => _quickCopyTorrent(gallery),
-            visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-            padding: EdgeInsets.zero,
           ),
-        ),
       ],
     );
   }
 
-  Future<void> _quickCopyTorrent(Gallery gallery) async {
-    try {
-      List<GalleryTorrent> torrents = await ehRequest.requestTorrentPage<List<GalleryTorrent>>(
-        gallery.gid,
-        gallery.token,
-        EHSpiderParser.torrentPage2GalleryTorrent,
-      );
-      if (torrents.isEmpty) {
-        toast('noTorrent'.tr);
-        return;
-      }
-      // Prefer non-outdated torrents
-      GalleryTorrent? torrent = torrents.where((t) => !t.outdated).firstOrNull ?? torrents.first;
-      await FlutterClipboard.copy(torrent.magnetUrl);
-      toast('hasCopiedToClipboard'.tr);
-    } catch (e) {
-      toast('getGalleryTorrentsFailed'.tr);
-    }
-  }
+  SearchPageStateMixin get state => Get.find<L>(tag: logic.tag).state;
+
+  L get logic => Get.find<L>();
 
   Widget buildGalleryCardTagWaterFlow(BuildContext context) {
     List<GalleryTag> mergedList = [];
