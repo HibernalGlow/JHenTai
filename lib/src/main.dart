@@ -11,6 +11,7 @@ import 'package:jhentai/src/service/built_in_blocked_user_service.dart';
 import 'package:jhentai/src/service/cloud_service.dart';
 import 'package:jhentai/src/service/frame_rate_service.dart';
 import 'package:jhentai/src/service/gallery_download_service.dart';
+import 'package:jhentai/src/service/gallery_magnet_service.dart';
 import 'package:jhentai/src/service/history_service.dart';
 import 'package:jhentai/src/service/isolate_service.dart';
 import 'package:jhentai/src/service/jh_service.dart';
@@ -60,6 +61,7 @@ List<JHLifeCircleBean> lifeCircleBeans = [
   archiveBotRequest,
   appUpdateService,
   galleryDownloadService,
+  galleryMagnetService,
   archiveDownloadService,
   localGalleryService,
   cloudConfigService,

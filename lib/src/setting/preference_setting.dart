@@ -37,6 +37,7 @@ class PreferenceSetting with JHLifeCircleBeanWithConfigStorage implements JHLife
   RxBool showDawnInfo = false.obs;
   RxBool showHVInfo = false.obs;
   RxBool useBuiltInBlockedUsers = true.obs;
+  RxBool autoFetchMagnet = true.obs;
   
   @override
   ConfigEnum get configEnum => ConfigEnum.preferenceSetting;
@@ -72,6 +73,7 @@ class PreferenceSetting with JHLifeCircleBeanWithConfigStorage implements JHLife
     showDawnInfo.value = map['showDawnInfo'] ?? showDawnInfo.value;
     showHVInfo.value = map['showHVInfo'] ?? showHVInfo.value;
     useBuiltInBlockedUsers.value = map['useBuiltInBlockedUsers'] ?? useBuiltInBlockedUsers.value;
+    autoFetchMagnet.value = map['autoFetchMagnet'] ?? autoFetchMagnet.value;
   }
 
   @override
@@ -102,6 +104,7 @@ class PreferenceSetting with JHLifeCircleBeanWithConfigStorage implements JHLife
       'showDawnInfo': showDawnInfo.value,
       'showHVInfo': showHVInfo.value,
       'useBuiltInBlockedUsers': useBuiltInBlockedUsers.value,
+      'autoFetchMagnet': autoFetchMagnet.value,
     });
   }
 
@@ -259,6 +262,12 @@ class PreferenceSetting with JHLifeCircleBeanWithConfigStorage implements JHLife
   Future<void> saveUseBuiltInBlockedUsers(bool useBuiltInBlockedUsers) async {
     log.debug('saveUseBuiltInBlockedUsers:$useBuiltInBlockedUsers');
     this.useBuiltInBlockedUsers.value = useBuiltInBlockedUsers;
+    await saveBeanConfig();
+  }
+
+  Future<void> saveAutoFetchMagnet(bool autoFetchMagnet) async {
+    log.debug('saveAutoFetchMagnet:$autoFetchMagnet');
+    this.autoFetchMagnet.value = autoFetchMagnet;
     await saveBeanConfig();
   }
 }

@@ -23,8 +23,9 @@ import 'eh_gallery_category_tag.dart';
 import '../service/read_progress_service.dart';
 import '../network/eh_request.dart';
 import '../utils/eh_spider_parser.dart';
-import '../utils/toast_util.dart';
 import '../model/gallery_torrent.dart';
+import '../service/gallery_magnet_service.dart';
+import '../utils/toast_util.dart';
 
 typedef CardCallback = FutureOr<void> Function(Gallery gallery);
 
@@ -190,14 +191,39 @@ class EHGalleryListCard extends StatelessWidget {
           Positioned(
             right: 0,
             top: 0,
-            child: IconButton(
-              icon: Icon(FontAwesomeIcons.magnet, size: 14, color: UIConfig.primaryColor(context)),
-              onPressed: () => onQuickCopyTorrent != null
-                  ? onQuickCopyTorrent!(gallery)
-                  : _quickCopyTorrent(gallery),
-              visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-              padding: EdgeInsets.zero,
-            ),
+            child: Obx(() {
+              bool isFetching = galleryMagnetService.isFetching(gallery.gid);
+              String? magnet = galleryMagnetService.getMagnet(gallery.gid);
+
+              return IconButton(
+                icon: isFetching
+                    ? const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Icon(
+                        FontAwesomeIcons.magnet,
+                        size: 14,
+                        color: magnet != null ? (magnet.isEmpty ? Colors.grey : UIConfig.primaryColor(context)) : UIConfig.primaryColor(context),
+                      ),
+                onPressed: isFetching
+                    ? null
+                    : () {
+                        if (magnet != null && magnet.isNotEmpty) {
+                          FlutterClipboard.copy(magnet).then((_) => toast('hasCopiedToClipboard'.tr));
+                          return;
+                        }
+                        if (onQuickCopyTorrent != null) {
+                          onQuickCopyTorrent!(gallery);
+                        } else {
+                          _quickCopyTorrent(gallery);
+                        }
+                      },
+                visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+                padding: EdgeInsets.zero,
+              );
+            }),
           ),
       ],
     );

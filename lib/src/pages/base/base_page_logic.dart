@@ -12,6 +12,7 @@ import 'package:jhentai/src/model/gallery_page.dart';
 import 'package:jhentai/src/model/search_config.dart';
 import 'package:jhentai/src/service/local_config_service.dart';
 import 'package:jhentai/src/setting/preference_setting.dart';
+import 'package:jhentai/src/service/gallery_magnet_service.dart';
 import 'package:jhentai/src/widget/eh_search_config_dialog.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -427,6 +428,10 @@ abstract class BasePageLogic extends GetxController with Scroll2TopLogicMixin {
       for (Gallery gallery in gallerys) {
         getNetworkImageData(gallery.cover.url, useCache: true);
       }
+    }
+
+    if (preferenceSetting.autoFetchMagnet.isTrue) {
+      galleryMagnetService.fetchAllMagnets(gallerys);
     }
 
     return filteredGallerys;

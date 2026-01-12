@@ -13,6 +13,7 @@ import 'package:jhentai/src/extension/get_logic_extension.dart';
 import 'package:jhentai/src/model/gallery_image_page_url.dart';
 import 'package:jhentai/src/model/gallery_url.dart';
 import 'package:jhentai/src/model/search_history.dart';
+import 'package:jhentai/src/service/gallery_magnet_service.dart';
 import 'package:jhentai/src/pages/base/base_page_logic.dart';
 import 'package:jhentai/src/pages/search/mixin/search_page_state_mixin.dart';
 import 'package:jhentai/src/service/search_history_service.dart';
@@ -372,6 +373,12 @@ mixin SearchPageLogicMixin on BasePageLogic {
     toast('fetchingMagnetLinks'.tr);
 
     for (Gallery gallery in selectedGalleries) {
+      String? cachedMagnet = galleryMagnetService.getMagnet(gallery.gid);
+      if (cachedMagnet != null && cachedMagnet.isNotEmpty) {
+        magnetLinks.add(cachedMagnet);
+        continue;
+      }
+
       try {
         List<GalleryTorrent> torrents = await ehRequest.requestTorrentPage<List<GalleryTorrent>>(
           gallery.gid,
@@ -381,6 +388,7 @@ mixin SearchPageLogicMixin on BasePageLogic {
         if (torrents.isNotEmpty) {
           GalleryTorrent torrent = torrents.firstWhere((t) => !t.outdated, orElse: () => torrents.first);
           magnetLinks.add(torrent.magnetUrl);
+          galleryMagnetService.magnetCache[gallery.gid] = torrent.magnetUrl;
         }
       } catch (e) {
         log.error('fetchMagnetLinkFailed'.tr + ': ${gallery.gid}', e);
@@ -397,6 +405,13 @@ mixin SearchPageLogicMixin on BasePageLogic {
   }
 
   Future<void> quickCopyTorrent(Gallery gallery) async {
+    String? cachedMagnet = galleryMagnetService.getMagnet(gallery.gid);
+    if (cachedMagnet != null && cachedMagnet.isNotEmpty) {
+      await FlutterClipboard.copy(cachedMagnet);
+      toast('hasCopiedToClipboard'.tr);
+      return;
+    }
+
     toast('fetchingMagnetLink'.tr);
     try {
       List<GalleryTorrent> torrents = await ehRequest.requestTorrentPage<List<GalleryTorrent>>(
@@ -407,6 +422,7 @@ mixin SearchPageLogicMixin on BasePageLogic {
       if (torrents.isNotEmpty) {
         GalleryTorrent torrent = torrents.firstWhere((t) => !t.outdated, orElse: () => torrents.first);
         await FlutterClipboard.copy(torrent.magnetUrl);
+        galleryMagnetService.magnetCache[gallery.gid] = torrent.magnetUrl;
         toast('hasCopiedToClipboard'.tr);
       } else {
         toast('noMagnetLinksFound'.tr);

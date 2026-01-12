@@ -10,6 +10,10 @@ import 'package:jhentai/src/extension/string_extension.dart';
 import 'package:jhentai/src/extension/widget_extension.dart';
 import 'package:jhentai/src/setting/style_setting.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:clipboard/clipboard.dart';
+import 'package:jhentai/src/service/gallery_magnet_service.dart';
+import 'package:jhentai/src/utils/toast_util.dart';
 
 import '../config/ui_config.dart';
 import '../consts/locale_consts.dart';
@@ -103,6 +107,7 @@ class EHGalleryWaterFlowCard extends StatelessWidget {
       children: [
         _buildCover(context),
         Positioned(bottom: 4, right: 4, child: _buildLanguageChip()),
+        Positioned(top: 4, right: 4, child: _buildMagnetIcon(context)),
       ],
     );
   }
@@ -114,6 +119,7 @@ class EHGalleryWaterFlowCard extends StatelessWidget {
           children: [
             _buildCover(context),
             Positioned(bottom: 4, right: 4, child: _buildLanguageChip()),
+            Positioned(top: 4, right: 4, child: _buildMagnetIcon(context)),
           ],
         ),
         Column(
@@ -126,6 +132,8 @@ class EHGalleryWaterFlowCard extends StatelessWidget {
                 if (downloaded) _buildDownloadIcon().marginOnly(right: 2),
                 if (gallery.isFavorite) _buildFavoriteIcon().marginOnly(right: 2),
                 if (gallery.pageCount != null) _buildPageCount(),
+                const SizedBox(width: 4),
+                _buildMagnetIcon(context, size: 10),
               ],
             ),
           ],
@@ -152,6 +160,8 @@ class EHGalleryWaterFlowCard extends StatelessWidget {
                 _buildCategory().marginOnly(left: 4, right: 4),
                 if (gallery.language != null) _buildLanguage().marginOnly(right: 2),
                 if (gallery.pageCount != null) _buildPageCount(),
+                const SizedBox(width: 4),
+                _buildMagnetIcon(context, size: 10),
               ],
             ),
             _buildTitle().marginOnly(top: 4, left: 2),
@@ -215,6 +225,34 @@ class EHGalleryWaterFlowCard extends StatelessWidget {
   Widget _buildPageCount() => Text(gallery.pageCount.toString() + 'P', style: const TextStyle(fontSize: 9));
 
   Widget _buildLanguage() => Text(LocaleConsts.language2Abbreviation[gallery.language] ?? '', style: const TextStyle(fontSize: 9));
+
+  Widget _buildMagnetIcon(BuildContext context, {double size = 12}) {
+    return Obx(() {
+      String? magnet = galleryMagnetService.getMagnet(gallery.gid);
+      bool isFetching = galleryMagnetService.isFetching(gallery.gid);
+
+      if (isFetching) {
+        return SizedBox(
+          width: size,
+          height: size,
+          child: CircularProgressIndicator(strokeWidth: size / 4),
+        );
+      }
+
+      return GestureDetector(
+        onTap: () {
+          if (magnet != null && magnet.isNotEmpty) {
+            FlutterClipboard.copy(magnet).then((_) => toast('hasCopiedToClipboard'.tr));
+          }
+        },
+        child: Icon(
+          FontAwesomeIcons.magnet,
+          size: size,
+          color: magnet != null ? (magnet.isEmpty ? Colors.grey : UIConfig.primaryColor(context)) : UIConfig.primaryColor(context),
+        ),
+      );
+    });
+  }
 
   Widget _buildRatingBar(BuildContext context) {
     return RatingBar.builder(
