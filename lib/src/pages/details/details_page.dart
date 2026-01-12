@@ -270,7 +270,7 @@ class DetailsPage extends StatelessWidget with Scroll2TopPageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildTitle(),
+        _buildTitle(context),
         const SizedBox(height: 4),
         _buildUploader(context),
         const Expanded(child: SizedBox()),
@@ -281,7 +281,7 @@ class DetailsPage extends StatelessWidget with Scroll2TopPageMixin {
     );
   }
 
-  Widget _buildTitle() {
+  Widget _buildTitle(BuildContext context) {
     return GetBuilder<DetailsPageLogic>(
       id: DetailsPageLogic.galleryId,
       global: false,
@@ -374,7 +374,7 @@ class DetailsPage extends StatelessWidget with Scroll2TopPageMixin {
       );
     });
   }
-  }
+
 
   Widget _buildSubTitle(BuildContext context) {
     return SliverToBoxAdapter(
