@@ -254,7 +254,7 @@ jobs:
           tag: ${{ github.ref_name }}
           allowUpdates: true
           bodyFile: changelog/${{ github.ref_name }}.md
-          artifacts: /tmp/artifacts/release-Windows/*.zip
+          artifacts: /tmp/artifacts/release-Windows/*.zip,/tmp/artifacts/release-macOS/*.dmg
           artifactErrorsFailBuild: true
           replacesArtifacts: true
 
