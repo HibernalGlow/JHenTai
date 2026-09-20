@@ -2,11 +2,11 @@ version: 1
 AppDir:
   path: ../../build/linux/AppDir
   app_info:
-    id: top.jtmonster.jhentai
-    name: JHenTai
-    icon: top.jtmonster.jhentai
+    id: top.jtmonster.jhentaix
+    name: JHenTaiX
+    icon: top.jtmonster.jhentaix
     version: latest
-    exec: jhentai
+    exec: jhentaix
     exec_args: $@
   files:
     include:

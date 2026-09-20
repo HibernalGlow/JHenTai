@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
-Name=JHenTai
+Name=JHenTaiX
 Comment=A cross-platform app made for e-hentai & exhentai by Flutter.
-Exec=jhentai
-Icon=top.jtmonster.jhentai
+Exec=jhentaix
+Icon=top.jtmonster.jhentaix
 Categories=Network;Graphics
 Terminal=false

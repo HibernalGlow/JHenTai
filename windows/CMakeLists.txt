@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
-project(jhentai LANGUAGES CXX)
+project(jhentaix LANGUAGES CXX)
 
-set(BINARY_NAME "jhentai")
+set(BINARY_NAME "jhentaix")
 
 cmake_policy(SET CMP0063 NEW)
 
