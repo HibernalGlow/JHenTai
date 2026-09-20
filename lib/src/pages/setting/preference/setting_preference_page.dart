@@ -38,6 +38,7 @@ class SettingPreferencePage extends StatelessWidget {
               if (styleSetting.isInV2Layout) _buildShowBottomNavigation(),
               if (styleSetting.isInV2Layout || styleSetting.actualLayout == LayoutMode.desktop) _buildHideScroll2TopButton(),
               _buildPreloadGalleryCover(),
+              _buildAutoFetchMagnet(),
               _buildEnableSwipeBackGesture(),
               if (styleSetting.isInV2Layout) _buildEnableLeftMenuDrawerGesture(),
               if (styleSetting.isInV2Layout) _buildQuickSearch(),
@@ -275,6 +276,15 @@ class SettingPreferencePage extends StatelessWidget {
       subtitle: Text('preloadGalleryCoverHint'.tr),
       value: preferenceSetting.preloadGalleryCover.value,
       onChanged: preferenceSetting.savePreloadGalleryCover,
+    );
+  }
+
+  Widget _buildAutoFetchMagnet() {
+    return SwitchListTile(
+      title: Text('autoFetchMagnet'.tr),
+      subtitle: Text('autoFetchMagnetHint'.tr),
+      value: preferenceSetting.autoFetchMagnet.value,
+      onChanged: preferenceSetting.saveAutoFetchMagnet,
     );
   }
 

@@ -359,7 +359,7 @@ class DetailsPage extends StatelessWidget with Scroll2TopPageMixin {
 
       return IconButton(
         icon: Icon(
-          FontAwesomeIcons.magnet,
+          FontAwesomeIcons.magnet.data,
           size: 18,
           color: magnet != null
               ? (magnet.isEmpty ? Colors.grey : UIConfig.primaryColor(context))
@@ -377,7 +377,7 @@ class DetailsPage extends StatelessWidget with Scroll2TopPageMixin {
              } else if (state.galleryDetails != null) {
                 galleryMagnetService.fetchAllMagnets([state.galleryDetails!.toGallery()]);
              } else {
-                toast('waitLoading'.tr);
+                toast('loading'.tr);
              }
           }
         },

@@ -7,6 +7,7 @@ on:
       - "master"
     tags:
       - v*
+  workflow_dispatch:
 
 # If previous workflow is still running, we push again, we will cancel the previous workflow
 concurrency:
@@ -49,13 +50,13 @@ jobs:
           #   cache_pod_restore_keys_hash_file: ios/Podfile.lock
           #   artifact_name: release-iOS
           #   artifact_path: build/**/*.ipa
-          # - target: macOS
-          #   os: macos-latest
-          #   cache_pod_key: macos-pods
-          #   cache_pod_path: macos/Pods
-          #   cache_pod_restore_keys_hash_file: macos/Podfile.lock
-          #   artifact_name: release-macOS
-          #   artifact_path: /Users/runner/work/JHenTai/JHenTai/*.dmg
+          - target: macOS
+            os: macos-latest
+            cache_pod_key: macos-pods
+            cache_pod_path: macos/Pods
+            cache_pod_restore_keys_hash_file: macos/Podfile.lock
+            artifact_name: release-macOS
+            artifact_path: /Users/runner/work/JHenTai/JHenTai/*.dmg
     outputs:
       version: ${{ steps.get_version.outputs.version }}
       arch: ${{ steps.get_version.outputs.arch}}

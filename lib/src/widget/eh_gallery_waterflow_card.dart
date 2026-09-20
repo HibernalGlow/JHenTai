@@ -246,7 +246,7 @@ class EHGalleryWaterFlowCard extends StatelessWidget {
           }
         },
         child: Icon(
-          FontAwesomeIcons.magnet,
+          FontAwesomeIcons.magnet.data,
           size: size,
           color: magnet != null ? (magnet.isEmpty ? Colors.grey : UIConfig.primaryColor(context)) : UIConfig.primaryColor(context),
         ),

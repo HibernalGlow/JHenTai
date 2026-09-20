@@ -204,7 +204,7 @@ class EHGalleryListCard extends StatelessWidget {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : Icon(
-                        FontAwesomeIcons.magnet,
+                        FontAwesomeIcons.magnet.data,
                         size: 14,
                         color: magnet != null ? (magnet.isEmpty ? Colors.grey : UIConfig.primaryColor(context)) : UIConfig.primaryColor(context),
                       ),
