@@ -28,14 +28,15 @@ import '../service/gallery_magnet_service.dart';
 import '../utils/toast_util.dart';
 
 typedef CardCallback = FutureOr<void> Function(Gallery gallery);
+typedef CardContextMenuCallback = void Function(Gallery gallery, Offset position);
 
 class EHGalleryListCard extends StatelessWidget {
   final Gallery gallery;
   final bool downloaded;
   final ListMode listMode;
   final CardCallback handleTapCard;
-  final CardCallback? handleLongPressCard;
-  final CardCallback? handleSecondaryTapCard;
+  final CardContextMenuCallback? handleLongPressCard;
+  final CardContextMenuCallback? handleSecondaryTapCard;
   final bool withTags;
   // Selection mode parameters
   final bool isSelectionMode;
@@ -67,8 +68,8 @@ class EHGalleryListCard extends StatelessWidget {
       onTap: () => isSelectionMode
           ? onToggleSelection?.call(gallery.gid)
           : handleTapCard(gallery),
-      onLongPress: handleLongPressCard == null ? null : () => handleLongPressCard!(gallery),
-      onSecondaryTap: handleSecondaryTapCard == null ? null : () => handleSecondaryTapCard!(gallery),
+      onLongPressStart: handleLongPressCard == null ? null : (details) => handleLongPressCard!(gallery, details.globalPosition),
+      onSecondaryTapDown: handleSecondaryTapCard == null ? null : (details) => handleSecondaryTapCard!(gallery, details.globalPosition),
       child: FadeIn(
         duration: const Duration(milliseconds: 100),
         child: SizedBox(
@@ -355,7 +356,7 @@ class EHGalleryListCard extends StatelessWidget {
               child: CircularProgressIndicator(
                 value: progress,
                 strokeWidth: 2,
-                backgroundColor: UIConfig.galleryCardTextColor(context).withOpacity(0.2),
+                backgroundColor: UIConfig.galleryCardTextColor(context).withValues(alpha: 0.2),
                 valueColor: AlwaysStoppedAnimation<Color>(UIConfig.galleryCardTextColor(context)),
               ),
             );

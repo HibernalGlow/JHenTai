@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:get/get.dart';
 import 'package:jhentai/src/enum/config_enum.dart';
 import 'package:jhentai/src/model/tab_bar_icon.dart';
+import 'package:jhentai/src/pages/download/download_base_page.dart';
 
 import '../service/jh_service.dart';
 import '../utils/locale_util.dart';
@@ -38,7 +39,9 @@ class PreferenceSetting with JHLifeCircleBeanWithConfigStorage implements JHLife
   RxBool showHVInfo = false.obs;
   RxBool useBuiltInBlockedUsers = true.obs;
   RxBool autoFetchMagnet = true.obs;
-  
+  Rx<DownloadPageGalleryType> defaultDownloadTab = DownloadPageGalleryType.download.obs;
+  RxBool confirmDestructiveActions = false.obs;
+
   @override
   ConfigEnum get configEnum => ConfigEnum.preferenceSetting;
 
@@ -74,6 +77,8 @@ class PreferenceSetting with JHLifeCircleBeanWithConfigStorage implements JHLife
     showHVInfo.value = map['showHVInfo'] ?? showHVInfo.value;
     useBuiltInBlockedUsers.value = map['useBuiltInBlockedUsers'] ?? useBuiltInBlockedUsers.value;
     autoFetchMagnet.value = map['autoFetchMagnet'] ?? autoFetchMagnet.value;
+    defaultDownloadTab.value = DownloadPageGalleryType.values[map['defaultDownloadTab'] ?? DownloadPageGalleryType.download.index];
+    confirmDestructiveActions.value = map['confirmDestructiveActions'] ?? confirmDestructiveActions.value;
   }
 
   @override
@@ -105,6 +110,8 @@ class PreferenceSetting with JHLifeCircleBeanWithConfigStorage implements JHLife
       'showHVInfo': showHVInfo.value,
       'useBuiltInBlockedUsers': useBuiltInBlockedUsers.value,
       'autoFetchMagnet': autoFetchMagnet.value,
+      'defaultDownloadTab': defaultDownloadTab.value.index,
+      'confirmDestructiveActions': confirmDestructiveActions.value,
     });
   }
 
@@ -268,6 +275,18 @@ class PreferenceSetting with JHLifeCircleBeanWithConfigStorage implements JHLife
   Future<void> saveAutoFetchMagnet(bool autoFetchMagnet) async {
     log.debug('saveAutoFetchMagnet:$autoFetchMagnet');
     this.autoFetchMagnet.value = autoFetchMagnet;
+    await saveBeanConfig();
+  }
+
+  Future<void> saveDefaultDownloadTab(DownloadPageGalleryType defaultDownloadTab) async {
+    log.debug('saveDefaultDownloadTab:$defaultDownloadTab');
+    this.defaultDownloadTab.value = defaultDownloadTab;
+    await saveBeanConfig();
+  }
+
+  Future<void> saveConfirmDestructiveActions(bool confirmDestructiveActions) async {
+    log.debug('saveConfirmDestructiveActions:$confirmDestructiveActions');
+    this.confirmDestructiveActions.value = confirmDestructiveActions;
     await saveBeanConfig();
   }
 }

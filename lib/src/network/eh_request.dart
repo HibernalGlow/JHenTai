@@ -887,6 +887,12 @@ emyPxgcYxn/eR44/KJ4EBs+lVDR3veyJm+kXQ99b21/+jh5Xos1AnX5iItreGCc=
     return _parseResponse(response, parser);
   }
 
+  Future<T> requestHathPage<T>({HtmlParser<T>? parser}) async {
+    Response response = await _getWithErrorHandler(EHConsts.EHathPerks);
+
+    return _parseResponse(response, parser);
+  }
+
   Future<T> requestResetImageLimit<T>({HtmlParser<T>? parser}) async {
     Response response = await _postWithErrorHandler(
       EHConsts.EHome,
@@ -1019,6 +1025,13 @@ emyPxgcYxn/eR44/KJ4EBs+lVDR3veyJm+kXQ99b21/+jh5Xos1AnX5iItreGCc=
           shouldPauseAllDownloadTasks: false,
         );
       }
+    }
+    if (e.response?.statusCode == 403 && networkSetting.allHostAndIPs.contains(e.requestOptions.uri.host)) {
+      return EHSiteException(
+        type: EHSiteExceptionType.cloudflare,
+        message: 'cloudflare403'.tr,
+        shouldPauseAllDownloadTasks: false,
+      );
     }
 
     return e;

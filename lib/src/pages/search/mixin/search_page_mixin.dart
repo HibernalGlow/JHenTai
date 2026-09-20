@@ -35,12 +35,12 @@ mixin SearchPageMixin<L extends SearchPageLogicMixin, S extends SearchPageStateM
       () => EHGalleryCollection(
         key: state.galleryCollectionKey,
         context: context,
-        gallerys: state.gallerys,
+        galleries: state.galleries,
         listMode: styleSetting.pageListMode[state.route] ?? styleSetting.listMode.value,
         loadingState: state.loadingState,
         handleTapCard: logic.handleTapGalleryCard,
-        handleLongPressCard: (gallery) => logic.handleLongPressCard(context, gallery),
-        handleSecondaryTapCard: (gallery) => logic.handleSecondaryTapCard(context, gallery),
+        handleLongPressCard: (gallery, position) => logic.handleLongPressCard(context, gallery, position: position),
+        handleSecondaryTapCard: (gallery, position) => logic.handleSecondaryTapCard(context, gallery, position: position),
         handleLoadMore: logic.loadMore,
         // Selection mode parameters
         isSelectionMode: state.isSelectionMode,
@@ -52,8 +52,11 @@ mixin SearchPageMixin<L extends SearchPageLogicMixin, S extends SearchPageStateM
     );
   }
 
-  List<Widget> buildActionButtons({VisualDensity? visualDensity}) {
-    return [
+  List<Widget> buildActionButtons({VisualDensity? visualDensity, double? compactSize, double? spacing}) {
+    final BoxConstraints? buttonConstraints = compactSize == null ? null : BoxConstraints.tightFor(width: compactSize, height: compactSize);
+    final EdgeInsetsGeometry? buttonPadding = compactSize == null ? null : EdgeInsets.zero;
+
+    final List<Widget> buttons = [
       IconButton(
         icon: Icon(state.isSelectionMode ? Icons.close : Icons.checklist),
         onPressed: logic.toggleSelectionMode,
@@ -69,27 +72,48 @@ mixin SearchPageMixin<L extends SearchPageLogicMixin, S extends SearchPageStateM
         icon: const Icon(Icons.attach_file),
         onPressed: logic.handleFileSearch,
         visualDensity: visualDensity,
+        constraints: buttonConstraints,
+        padding: buttonPadding,
       ),
       IconButton(
         icon: const Icon(Icons.restore),
         onPressed: logic.handleTapJumpButton,
         visualDensity: visualDensity,
+        constraints: buttonConstraints,
+        padding: buttonPadding,
       ),
       IconButton(
-        icon: Icon(state.bodyType == SearchPageBodyType.gallerys ? Icons.search : Icons.image_outlined),
+        icon: Icon(state.bodyType == SearchPageBodyType.galleries ? Icons.search : Icons.image_outlined),
         onPressed: logic.toggleBodyType,
         visualDensity: visualDensity,
+        constraints: buttonConstraints,
+        padding: buttonPadding,
       ),
       IconButton(
         icon: const Icon(Icons.filter_alt_outlined),
         onPressed: () => logic.handleTapFilterButton(EHSearchConfigDialogType.filter),
         visualDensity: visualDensity,
+        constraints: buttonConstraints,
+        padding: buttonPadding,
       ),
       IconButton(
         icon: const Icon(Icons.more_vert),
         onPressed: () => toRoute(Routes.quickSearch),
         visualDensity: visualDensity,
+        constraints: buttonConstraints,
+        padding: buttonPadding,
       ),
+    ];
+
+    if (spacing == null) {
+      return buttons;
+    }
+
+    return [
+      for (var i = 0; i < buttons.length; i++) ...[
+        if (i > 0) SizedBox(width: spacing),
+        buttons[i],
+      ],
     ];
   }
 
@@ -140,7 +164,7 @@ mixin SearchPageMixin<L extends SearchPageLogicMixin, S extends SearchPageStateM
               ),
             ),
             onTap: () {
-              if (state.bodyType == SearchPageBodyType.gallerys) {
+              if (state.bodyType == SearchPageBodyType.galleries) {
                 state.hideSearchHistory = false;
                 logic.toggleBodyType();
               }

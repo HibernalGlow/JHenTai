@@ -130,9 +130,9 @@ abstract class BasePageLogic extends GetxController with Scroll2TopLogicMixin {
       return;
     }
 
-    List<Gallery> gallerys = await postHandleNewGallerys(galleryPage.gallerys, cleanDuplicate: false);
+    List<Gallery> galleries = await postHandleNewGalleries(galleryPage.galleries, cleanDuplicate: false);
 
-    state.gallerys = gallerys;
+    state.galleries = galleries;
     state.totalCount = galleryPage.totalCount;
     state.prevGid = galleryPage.prevGid;
     state.nextGid = galleryPage.nextGid;
@@ -141,7 +141,7 @@ abstract class BasePageLogic extends GetxController with Scroll2TopLogicMixin {
 
     state.refreshState = LoadingState.idle;
 
-    if (state.nextGid == null && state.prevGid == null && state.gallerys.isEmpty) {
+    if (state.nextGid == null && state.prevGid == null && state.galleries.isEmpty) {
       state.loadingState = LoadingState.noData;
     } else if (state.nextGid == null) {
       state.loadingState = LoadingState.noMore;
@@ -164,7 +164,7 @@ abstract class BasePageLogic extends GetxController with Scroll2TopLogicMixin {
 
     state.loadingState = LoadingState.loading;
 
-    state.gallerys.clear();
+    state.galleries.clear();
     state.prevGid = null;
     state.nextGid = null;
     state.seek = DateTime.now();
@@ -192,15 +192,15 @@ abstract class BasePageLogic extends GetxController with Scroll2TopLogicMixin {
     try {
       galleryPage = await getGalleryPage(prevGid: state.prevGid);
     } on DioException catch (e) {
-      log.error('getGallerysFailed'.tr, e.errorMsg);
-      snack('getGallerysFailed'.tr, e.errorMsg ?? '', isShort: true);
+      log.error('getGalleriesFailed'.tr, e.errorMsg);
+      snack('getGalleriesFailed'.tr, e.errorMsg ?? '', isShort: true);
       state.loadingState = prevState;
       updateSafely([loadingStateId]);
       return;
     } on EHSiteException catch (e) {
-      log.error('getGallerysFailed'.tr, e.message);
+      log.error('getGalleriesFailed'.tr, e.message);
       snack(
-        'getGallerysFailed'.tr,
+        'getGalleriesFailed'.tr,
         e.message,
         isShort: true,
         onPressed: e.referLink == null ? null : () => launchUrlString(e.referLink!, mode: LaunchMode.externalApplication),
@@ -209,16 +209,16 @@ abstract class BasePageLogic extends GetxController with Scroll2TopLogicMixin {
       updateSafely([loadingStateId]);
       return;
     } catch (e) {
-      log.error('getGallerysFailed'.tr, e.toString());
-      snack('getGallerysFailed'.tr, e.toString(), isShort: true);
+      log.error('getGalleriesFailed'.tr, e.toString());
+      snack('getGalleriesFailed'.tr, e.toString(), isShort: true);
       state.loadingState = prevState;
       updateSafely([loadingStateId]);
       return;
     }
 
-    List<Gallery> gallerys = await postHandleNewGallerys(galleryPage.gallerys);
+    List<Gallery> galleries = await postHandleNewGalleries(galleryPage.galleries);
 
-    state.gallerys.insertAll(0, gallerys);
+    state.galleries.insertAll(0, galleries);
     state.totalCount = galleryPage.totalCount;
     state.prevGid = galleryPage.prevGid;
     state.favoriteSortOrder = galleryPage.favoriteSortOrder;
@@ -241,15 +241,15 @@ abstract class BasePageLogic extends GetxController with Scroll2TopLogicMixin {
     try {
       galleryPage = await getGalleryPage(nextGid: state.nextGid);
     } on DioException catch (e) {
-      log.error('getGallerysFailed'.tr, e.errorMsg);
-      snack('getGallerysFailed'.tr, e.errorMsg ?? '', isShort: true);
+      log.error('getGalleriesFailed'.tr, e.errorMsg);
+      snack('getGalleriesFailed'.tr, e.errorMsg ?? '', isShort: true);
       state.loadingState = LoadingState.error;
       updateSafely([loadingStateId]);
       return;
     } on EHSiteException catch (e) {
-      log.error('getGallerysFailed'.tr, e.message);
+      log.error('getGalleriesFailed'.tr, e.message);
       snack(
-        'getGallerysFailed'.tr,
+        'getGalleriesFailed'.tr,
         e.message,
         isShort: true,
         onPressed: e.referLink == null ? null : () => launchUrlString(e.referLink!, mode: LaunchMode.externalApplication),
@@ -258,21 +258,21 @@ abstract class BasePageLogic extends GetxController with Scroll2TopLogicMixin {
       updateSafely([loadingStateId]);
       return;
     } catch (e) {
-      log.error('getGallerysFailed'.tr, e.toString());
-      snack('getGallerysFailed'.tr, e.toString(), isShort: true);
+      log.error('getGalleriesFailed'.tr, e.toString());
+      snack('getGalleriesFailed'.tr, e.toString(), isShort: true);
       state.loadingState = LoadingState.error;
       updateSafely([loadingStateId]);
       return;
     }
 
-    List<Gallery> gallerys = await postHandleNewGallerys(galleryPage.gallerys);
+    List<Gallery> galleries = await postHandleNewGalleries(galleryPage.galleries);
 
-    state.gallerys.addAll(gallerys);
+    state.galleries.addAll(galleries);
     state.totalCount = galleryPage.totalCount;
     state.nextGid = galleryPage.nextGid;
     state.favoriteSortOrder = galleryPage.favoriteSortOrder;
 
-    if (state.nextGid == null && state.prevGid == null && state.gallerys.isEmpty) {
+    if (state.nextGid == null && state.prevGid == null && state.galleries.isEmpty) {
       state.loadingState = LoadingState.noData;
     } else if (state.nextGid == null) {
       state.loadingState = LoadingState.noMore;
@@ -290,7 +290,7 @@ abstract class BasePageLogic extends GetxController with Scroll2TopLogicMixin {
 
     log.info('Jump page to $dateTime');
 
-    state.gallerys.clear();
+    state.galleries.clear();
     state.loadingState = LoadingState.loading;
     updateSafely();
 
@@ -300,15 +300,15 @@ abstract class BasePageLogic extends GetxController with Scroll2TopLogicMixin {
     try {
       galleryPage = await getGalleryPage(nextGid: state.nextGid, prevGid: state.prevGid, seek: dateTime);
     } on DioException catch (e) {
-      log.error('getGallerysFailed'.tr, e.errorMsg);
-      snack('getGallerysFailed'.tr, e.errorMsg ?? '', isShort: true);
+      log.error('getGalleriesFailed'.tr, e.errorMsg);
+      snack('getGalleriesFailed'.tr, e.errorMsg ?? '', isShort: true);
       state.loadingState = LoadingState.error;
       updateSafely([loadingStateId]);
       return;
     } on EHSiteException catch (e) {
-      log.error('getGallerysFailed'.tr, e.message);
+      log.error('getGalleriesFailed'.tr, e.message);
       snack(
-        'getGallerysFailed'.tr,
+        'getGalleriesFailed'.tr,
         e.message,
         isShort: true,
         onPressed: e.referLink == null ? null : () => launchUrlString(e.referLink!, mode: LaunchMode.externalApplication),
@@ -317,15 +317,15 @@ abstract class BasePageLogic extends GetxController with Scroll2TopLogicMixin {
       updateSafely([loadingStateId]);
       return;
     } catch (e) {
-      log.error('getGallerysFailed'.tr, e.toString());
-      snack('getGallerysFailed'.tr, e.toString(), isShort: true);
+      log.error('getGalleriesFailed'.tr, e.toString());
+      snack('getGalleriesFailed'.tr, e.toString(), isShort: true);
       updateSafely([loadingStateId]);
       return;
     }
 
-    List<Gallery> gallerys = await postHandleNewGallerys(galleryPage.gallerys);
+    List<Gallery> galleries = await postHandleNewGalleries(galleryPage.galleries);
 
-    state.gallerys = gallerys;
+    state.galleries = galleries;
     state.totalCount = galleryPage.totalCount;
     state.prevGid = galleryPage.prevGid;
     state.nextGid = galleryPage.nextGid;
@@ -334,7 +334,7 @@ abstract class BasePageLogic extends GetxController with Scroll2TopLogicMixin {
 
     state.seek = dateTime;
 
-    if (state.nextGid == null && state.prevGid == null && state.gallerys.isEmpty) {
+    if (state.nextGid == null && state.prevGid == null && state.galleries.isEmpty) {
       state.loadingState = LoadingState.noData;
     } else if (state.nextGid == null) {
       state.loadingState = LoadingState.noMore;
@@ -389,9 +389,9 @@ abstract class BasePageLogic extends GetxController with Scroll2TopLogicMixin {
     );
   }
 
-  void handleLongPressCard(BuildContext context, Gallery gallery) async {}
+  void handleLongPressCard(BuildContext context, Gallery gallery, {Offset? position}) async {}
 
-  void handleSecondaryTapCard(BuildContext context, Gallery gallery) async {}
+  void handleSecondaryTapCard(BuildContext context, Gallery gallery, {Offset? position}) async {}
 
   Future<GalleryPageInfo> getGalleryPage({String? prevGid, String? nextGid, DateTime? seek}) async {
     log.info('$runtimeType get data, prevGid:$prevGid, nextGid:$nextGid');
@@ -415,49 +415,49 @@ abstract class BasePageLogic extends GetxController with Scroll2TopLogicMixin {
     );
   }
 
-  Future<List<Gallery>> postHandleNewGallerys(List<Gallery> gallerys, {bool cleanDuplicate = true}) async {
+  Future<List<Gallery>> postHandleNewGalleries(List<Gallery> galleries, {bool cleanDuplicate = true}) async {
     if (cleanDuplicate) {
-      _cleanDuplicateGallery(gallerys);
+      _cleanDuplicateGallery(galleries);
     }
 
-    await _translateGalleryTagsIfNeeded(gallerys);
+    await _translateGalleryTagsIfNeeded(galleries);
 
-    List<Gallery> filteredGallerys = await _filterByBlockingRules(gallerys);
+    List<Gallery> filteredGalleries = await _filterByBlockingRules(galleries);
 
     if (preferenceSetting.preloadGalleryCover.isTrue) {
-      for (Gallery gallery in gallerys) {
+      for (Gallery gallery in galleries) {
         getNetworkImageData(gallery.cover.url, useCache: true);
       }
     }
 
     if (preferenceSetting.autoFetchMagnet.isTrue) {
-      galleryMagnetService.fetchAllMagnets(gallerys);
+      galleryMagnetService.fetchAllMagnets(galleries);
     }
 
-    return filteredGallerys;
+    return filteredGalleries;
   }
 
   /// deal with the first and last page
-  void _cleanDuplicateGallery(List<Gallery> newGallerys) {
-    newGallerys.removeWhere((newGallery) => state.gallerys.firstWhereOrNull((e) => e.galleryUrl == newGallery.galleryUrl) != null);
+  void _cleanDuplicateGallery(List<Gallery> newGalleries) {
+    newGalleries.removeWhere((newGallery) => state.galleries.firstWhereOrNull((e) => e.galleryUrl == newGallery.galleryUrl) != null);
   }
 
-  Future<List<Gallery>> _filterByBlockingRules(List<Gallery> newGallerys) async {
-    if (newGallerys.isEmpty) {
-      return newGallerys;
+  Future<List<Gallery>> _filterByBlockingRules(List<Gallery> newGalleries) async {
+    if (newGalleries.isEmpty) {
+      return newGalleries;
     }
 
-    // if all gallerys are filtered, we keep the first one to indicate it
-    List<Gallery> filteredGallerys = await localBlockRuleService.executeRules(newGallerys);
-    if (filteredGallerys.isNotEmpty) {
-      return filteredGallerys;
+    // if all galleries are filtered, we keep the first one to indicate it
+    List<Gallery> filteredGalleries = await localBlockRuleService.executeRules(newGalleries);
+    if (filteredGalleries.isNotEmpty) {
+      return filteredGalleries;
     } else {
-      return newGallerys.sublist(0, 1).map((g) => g..blockedByLocalRules = true).toList();
+      return newGalleries.sublist(0, 1).map((g) => g..blockedByLocalRules = true).toList();
     }
   }
 
-  Future<void> _translateGalleryTagsIfNeeded(List<Gallery> gallerys) async {
-    await Future.wait(gallerys.map((gallery) {
+  Future<void> _translateGalleryTagsIfNeeded(List<Gallery> galleries) async {
+    await Future.wait(galleries.map((gallery) {
       return tagTranslationService.translateTagsIfNeeded(gallery.tags);
     }).toList());
   }
