@@ -19,6 +19,7 @@ import '../config/ui_config.dart';
 import '../consts/locale_consts.dart';
 import '../model/gallery.dart';
 import '../model/gallery_tag.dart';
+import '../utils/search_util.dart';
 import 'eh_gallery_category_tag.dart';
 import 'eh_gallery_list_card_.dart';
 import 'eh_image.dart';
@@ -317,7 +318,7 @@ class WaterFallFlowCardTagWaterFlow extends StatelessWidget {
             crossAxisSpacing: 4,
           ),
           itemCount: mergedList.length,
-          itemBuilder: (_, int index) => WaterFallFlowTag(galleryTag: mergedList[index]),
+          itemBuilder: (_, int index) => WaterFallFlowTag(galleryTag: mergedList[index], onTap: searchWithGalleryTag),
         ).enableMouseDrag(withScrollBar: false),
       );
     });
@@ -329,13 +330,14 @@ class WaterFallFlowCardTagWaterFlow extends StatelessWidget {
 }
 
 class WaterFallFlowTag extends StatelessWidget {
-  const WaterFallFlowTag({Key? key, required this.galleryTag}) : super(key: key);
+  const WaterFallFlowTag({Key? key, required this.galleryTag, this.onTap}) : super(key: key);
 
   final GalleryTag galleryTag;
+  final ValueChanged<GalleryTag>? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    Widget child = Container(
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: galleryTag.backgroundColor ?? UIConfig.ehTagBackGroundColor(context),
@@ -353,5 +355,18 @@ class WaterFallFlowTag extends StatelessWidget {
         ),
       ),
     );
+
+    if (onTap != null) {
+      child = MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => onTap!(galleryTag),
+          child: child,
+        ),
+      );
+    }
+
+    return child;
   }
 }

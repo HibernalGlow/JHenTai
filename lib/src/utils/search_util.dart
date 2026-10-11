@@ -4,6 +4,7 @@ import 'package:jhentai/src/service/quick_search_service.dart';
 import 'package:jhentai/src/utils/route_util.dart';
 import 'package:jhentai/src/widget/loading_state_indicator.dart';
 
+import '../model/gallery_tag.dart';
 import '../model/jh_layout.dart';
 import '../model/search_config.dart';
 import '../pages/search/desktop/desktop_search_page_logic.dart';
@@ -91,6 +92,16 @@ Future<void> newSearch({String? keyword, SearchConfig? rewriteSearchConfig, bool
     default:
       return;
   }
+}
+
+/// The keyword form the details page uses for an exact tag search: `namespace:"key$"`.
+/// The trailing `\$` is part of the form, not an escape we can drop.
+String tagSearchKeyword(GalleryTag tag) => '${tag.tagData.namespace}:"${tag.tagData.key}\$"';
+
+/// Search with a tag exactly the way the details page does, so a tag tapped
+/// anywhere (including gallery cards) resolves to the same keyword form.
+void searchWithGalleryTag(GalleryTag tag) {
+  newSearch(keyword: tagSearchKeyword(tag), forceNewRoute: true);
 }
 
 Future<void> handleAddQuickSearch() async {
