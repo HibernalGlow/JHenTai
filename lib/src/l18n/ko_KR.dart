@@ -436,6 +436,7 @@ class ko_KR {
       'saveSuccess': '저장 성공',
       'saveFailed': 'Save failed',
       'updateSuccess': '수정 성공',
+      'deleteSuccess': '삭제 성공',
       'connectTimeout': '연결 시간 초과',
       'receiveTimeout': '수신 시간 초과',
       'pageCacheMaxAge': '페이지 캐시의 수명 최대 시간',

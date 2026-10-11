@@ -440,6 +440,7 @@ class ru_RU {
       'saveSuccess': 'Успешно сохранено',
       'saveFailed': 'Не удалось сохранить',
       'updateSuccess': 'Успешно обновлено',
+      'deleteSuccess': 'Успешно удалено',
       'connectTimeout': 'Тайм-аут подключения',
       'receiveTimeout': 'Тайм-аут получения данных',
       'pageCacheMaxAge': 'Время жизни кэша страниц',

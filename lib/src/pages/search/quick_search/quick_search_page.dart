@@ -38,9 +38,20 @@ class QuickSearchPage extends StatelessWidget {
                 ListTile(
                   dense: true,
                   title: Text(entries[index].key, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.settings),
-                    onPressed: () => quickSearchService.handleUpdateQuickSearch(entries[index]),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.settings),
+                        tooltip: 'update'.tr,
+                        onPressed: () => quickSearchService.handleUpdateQuickSearch(entries[index]),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete_outline),
+                        tooltip: 'delete'.tr,
+                        onPressed: () => quickSearchService.handleDeleteQuickSearch(entries[index].key),
+                      ),
+                    ],
                   ).marginOnly(right: GetPlatform.isDesktop ? 24 : 0),
                   onTap: () => newSearch(rewriteSearchConfig: entries[index].value, forceNewRoute: true),
                 ),

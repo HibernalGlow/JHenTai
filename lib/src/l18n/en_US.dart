@@ -436,6 +436,7 @@ class en_US {
       'saveSuccess': 'Save success',
       'saveFailed': 'Save failed',
       'updateSuccess': 'Update success',
+      'deleteSuccess': 'Delete success',
       'connectTimeout': 'Connect Timeout',
       'receiveTimeout': 'Receive Data Timeout',
       'pageCacheMaxAge': 'Page Cache Expiration Time',

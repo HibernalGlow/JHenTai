@@ -436,6 +436,7 @@ class zh_CN {
       'saveSuccess': '保存成功',
       'saveFailed': '保存失败',
       'updateSuccess': '更新成功',
+      'deleteSuccess': '删除成功',
       'connectTimeout': '建立连接超时时间',
       'receiveTimeout': '接收数据超时时间',
       'pageCacheMaxAge': '页面缓存时间',

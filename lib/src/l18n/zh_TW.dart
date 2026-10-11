@@ -436,6 +436,7 @@ class zh_TW {
       'saveSuccess': '儲存成功',
       'saveFailed': '儲存失敗',
       'updateSuccess': '更新成功',
+      'deleteSuccess': '刪除成功',
       'connectTimeout': '建立連線超時時間',
       'receiveTimeout': '接收資料超時時間',
       'pageCacheMaxAge': '頁面快取時間',

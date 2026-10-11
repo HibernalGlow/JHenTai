@@ -437,6 +437,7 @@ class pt_BR {
       'saveSuccess': 'Salvo com sucesso',
       'saveFailed': 'Save failed',
       'updateSuccess': 'Atualizado com sucesso',
+      'deleteSuccess': 'Excluído com sucesso',
       'connectTimeout': 'Tempo limite de conexão',
       'receiveTimeout': 'Tempo limite de recebimento de dados',
       'pageCacheMaxAge': 'Idade máxima do cache de página',
