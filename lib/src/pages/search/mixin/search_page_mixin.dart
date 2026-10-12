@@ -98,7 +98,7 @@ mixin SearchPageMixin<L extends SearchPageLogicMixin, S extends SearchPageStateM
       ),
       IconButton(
         icon: const Icon(Icons.bookmark_add_outlined),
-        tooltip: 'addQuickSearch'.tr,
+        tooltip: 'saveCurrentSearch'.tr,
         onPressed: handleAddQuickSearch,
         visualDensity: visualDensity,
         constraints: buttonConstraints,

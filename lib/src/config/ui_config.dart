@@ -204,6 +204,8 @@ class UIConfig {
   static Color galleryCardTextColor(BuildContext context) => Theme.of(context).colorScheme.outline;
   static const double galleryCardTagsHeight = 70;
 
+  static const double quickSearchPresetBarHeight = 38;
+
   static const double dashboardCardSize = 210;
   static const Color dashboardCardTextColor = Colors.white;
   static Color dashboardCardFooterTextColor = Colors.grey.shade300;

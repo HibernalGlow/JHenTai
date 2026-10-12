@@ -694,6 +694,7 @@ class ru_RU {
       'addTabBar': 'Добавить вкладку',
       'updateTabBar': 'Обновить вкладку',
       'addQuickSearch': 'Добавить',
+      'saveCurrentSearch': 'Сохранить текущий поиск',
       'updateQuickSearch': 'Обновить',
       'filter': 'Фильтр',
       'tabBarName': 'Имя вкладки',

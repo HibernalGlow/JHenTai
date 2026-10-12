@@ -685,6 +685,7 @@ class ko_KR {
       'addTabBar': '탭 추가',
       'updateTabBar': '탭 수정',
       'addQuickSearch': '추가',
+      'saveCurrentSearch': '현재 검색 저장',
       'updateQuickSearch': '수정',
       'filter': '필터',
       'tabBarName': '탭 이름',

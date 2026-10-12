@@ -685,6 +685,7 @@ class zh_TW {
       'addTabBar': '新增標籤欄',
       'updateTabBar': '更新條件',
       'addQuickSearch': '新增',
+      'saveCurrentSearch': '儲存當前搜尋',
       'updateQuickSearch': '修改',
       'filter': '篩選',
       'tabBarName': '標籤欄名稱',

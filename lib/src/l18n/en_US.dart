@@ -685,6 +685,7 @@ class en_US {
       'addTabBar': 'Add Tab Bar',
       'updateTabBar': 'Update Tab Bar',
       'addQuickSearch': 'Add',
+      'saveCurrentSearch': 'Save current search',
       'updateQuickSearch': 'Update',
       'filter': 'Filter',
       'tabBarName': 'TabBar Name',

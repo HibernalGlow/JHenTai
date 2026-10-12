@@ -13,6 +13,7 @@ import '../../base/base_page.dart';
 import '../mixin/search_page_mixin.dart';
 import '../mixin/search_page_state_mixin.dart';
 import '../quick_search/quick_search_page.dart';
+import '../quick_search/quick_search_preset_bar.dart';
 
 class SearchPageMobileV2 extends BasePage<SearchPageMobileV2Logic, SearchPageMobileV2State>
     with SearchPageMixin<SearchPageMobileV2Logic, SearchPageMobileV2State> {
@@ -71,6 +72,7 @@ class SearchPageMobileV2 extends BasePage<SearchPageMobileV2Logic, SearchPageMob
   Widget buildBody(BuildContext context) {
     return Column(
       children: [
+        const QuickSearchPresetBar(),
         if (state.bodyType == SearchPageBodyType.suggestionAndHistory)
           GetBuilder<SearchPageMobileV2Logic>(
             id: logic.suggestionBodyId,

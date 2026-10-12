@@ -7,6 +7,7 @@ import '../../../config/ui_config.dart';
 import '../../base/base_page.dart';
 import '../mixin/search_page_mixin.dart';
 import '../mixin/search_page_state_mixin.dart';
+import '../quick_search/quick_search_preset_bar.dart';
 
 class DesktopSearchPageTabView extends BasePage<DesktopSearchPageTabLogic, DesktopSearchPageTabState>
     with SearchPageMixin<DesktopSearchPageTabLogic, DesktopSearchPageTabState> {
@@ -26,6 +27,7 @@ class DesktopSearchPageTabView extends BasePage<DesktopSearchPageTabLogic, Deskt
     return Column(
       children: [
         buildHeader(context),
+        const QuickSearchPresetBar(),
         if (state.bodyType == SearchPageBodyType.suggestionAndHistory)
           GetBuilder<DesktopSearchPageTabLogic>(
             global: false,

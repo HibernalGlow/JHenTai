@@ -685,6 +685,7 @@ class zh_CN {
       'addTabBar': '添加标签栏',
       'updateTabBar': '更新配置',
       'addQuickSearch': '添加',
+      'saveCurrentSearch': '保存当前搜索',
       'updateQuickSearch': '修改',
       'filter': '筛选',
       'tabBarName': '标签栏名称',

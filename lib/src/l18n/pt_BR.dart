@@ -686,6 +686,7 @@ class pt_BR {
       'addTabBar': 'Adicionar barra de guias',
       'updateTabBar': 'Atualizar barra de guias',
       'addQuickSearch': 'Adicionar',
+      'saveCurrentSearch': 'Salvar a busca atual',
       'updateQuickSearch': 'Atualizar',
       'filter': 'Filtro',
       'tabBarName': 'Nome da TabBar',
