@@ -23,6 +23,7 @@ import 'eh_gallery_category_tag.dart';
 import '../service/read_progress_service.dart';
 import '../network/eh_request.dart';
 import '../utils/eh_spider_parser.dart';
+import '../utils/search_util.dart';
 import '../model/gallery_torrent.dart';
 import '../service/gallery_magnet_service.dart';
 import '../utils/toast_util.dart';
@@ -280,7 +281,7 @@ class EHGalleryListCard extends StatelessWidget {
           crossAxisSpacing: 4,
         ),
         itemCount: mergedList.length,
-        itemBuilder: (_, int index) => EHTag(tag: mergedList[index]),
+        itemBuilder: (_, int index) => EHTag(tag: mergedList[index], onTap: searchWithGalleryTag),
       ).enableMouseDrag(withScrollBar: false),
     );
   }

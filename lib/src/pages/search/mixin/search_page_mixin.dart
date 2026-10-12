@@ -97,6 +97,14 @@ mixin SearchPageMixin<L extends SearchPageLogicMixin, S extends SearchPageStateM
         padding: buttonPadding,
       ),
       IconButton(
+        icon: const Icon(Icons.bookmark_add_outlined),
+        tooltip: 'saveCurrentSearch'.tr,
+        onPressed: handleAddQuickSearch,
+        visualDensity: visualDensity,
+        constraints: buttonConstraints,
+        padding: buttonPadding,
+      ),
+      IconButton(
         icon: const Icon(Icons.more_vert),
         onPressed: () => toRoute(Routes.quickSearch),
         visualDensity: visualDensity,

@@ -1366,7 +1366,7 @@ class DetailsPage extends StatelessWidget with Scroll2TopPageMixin {
         .map(
           (tag) => EHTag(
             tag: tag,
-            onTap: (tag) => newSearch(keyword: '${tag.tagData.namespace}:"${tag.tagData.key}\$"', forceNewRoute: true),
+            onTap: searchWithGalleryTag,
             onSecondaryTap: logic.showTagDialog,
             onLongPress: logic.showTagDialog,
             showTagStatus: preferenceSetting.showGalleryTagVoteStatus.isTrue,

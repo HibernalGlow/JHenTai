@@ -9,6 +9,7 @@ import 'package:jhentai/src/extension/get_logic_extension.dart';
 import 'package:jhentai/src/model/search_config.dart';
 import 'package:jhentai/src/utils/toast_util.dart';
 
+import '../widget/eh_alert_dialog.dart';
 import '../widget/eh_search_config_dialog.dart';
 import 'jh_service.dart';
 import 'log.dart';
@@ -72,6 +73,18 @@ class QuickSearchService extends GetxController with JHLifeCircleBeanWithConfigS
     quickSearchConfigs.remove(name);
     await saveBeanConfig();
     update();
+  }
+
+  Future<void> handleDeleteQuickSearch(String name) async {
+    bool? confirmed = await Get.dialog(EHDialog(title: 'delete'.tr + '?', content: name));
+
+    if (confirmed != true) {
+      return;
+    }
+
+    log.info('Delete quick search: $name');
+    await removeQuickSearch(name);
+    toast('deleteSuccess'.tr);
   }
 
   Future<void> reOrderQuickSearch(int oldIndex, int newIndex) async {
